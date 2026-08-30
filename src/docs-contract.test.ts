@@ -12,6 +12,10 @@ import { resolve } from "node:path";
  * Round-9 (2026-08-31) added built-artifact E2E pins after the first-ever
  * built-artifact run exposed the dev-only favicon assertion (E2E-L1); the
  * unit budget was re-pinned 32/179 → 32/181 (docs-contract 10 → 12).
+ * Round-11 (2026-08-31) added the agent-browser eval pitfall pin and the
+ * round-11 live-pass ledger rows after the fresh E2E pass vs `66d2398`
+ * exposed the eval backslash-mangling lesson (E2E-J1); the unit budget was
+ * re-pinned 32/181 → 32/184 (docs-contract 12 → 15).
  */
 const root = resolve(__dirname, "..");
 
@@ -47,6 +51,12 @@ describe("risen-christ_SKILL.md contract", () => {
     expect(skillContract).toContain("playwright.built.config.ts");
   });
 
+  it("carries the agent-browser eval pitfall and round-11 ledger row (E2E-J1)", () => {
+    expect(skillContract).toContain("agent-browser eval");
+    expect(skillContract).toContain("backslash");
+    expect(skillContract).toContain("e2e-live-pass-round11-2026-08-31.md");
+  });
+
   it("carries no St Mary parish identity as current facts", () => {
     const stale = [
       "5 Bukit Batok East Ave 2",
@@ -63,7 +73,7 @@ describe("risen-christ_SKILL.md contract", () => {
   });
 
   it("Quick Reference Card carries the ported test state and Risen Christ facts", () => {
-    expect(skillQuickRef).toContain("32/181 + 48 E2E");
+    expect(skillQuickRef).toContain("32/184 + 48 E2E");
     expect(skillQuickRef).not.toContain("24/134");
     expect(skillQuickRef).not.toContain("42 E2E");
     expect(skillQuickRef).not.toContain("25/142");
@@ -83,6 +93,10 @@ describe("README.md contract", () => {
   it("does not flag the e2e specs as STALE", () => {
     expect(readme).not.toContain("— STALE");
   });
+
+  it("references the round-11 live-pass ledger (E2E-J1 + tri-env verification)", () => {
+    expect(readme).toContain("e2e-live-pass-round11-2026-08-31.md");
+  });
 });
 
 describe("AGENTS.md contract", () => {
@@ -90,8 +104,12 @@ describe("AGENTS.md contract", () => {
     expect(agents).toContain("48 tests");
   });
 
-  it("states the verified 32 files / 181 unit budget", () => {
-    expect(agents).toContain("32 files / 181 tests");
+  it("states the verified 32 files / 184 unit budget", () => {
+    expect(agents).toContain("32 files / 184 tests");
+  });
+
+  it("references the round-11 live-pass ledger (E2E-J1 + tri-env verification)", () => {
+    expect(agents).toContain("e2e-live-pass-round11-2026-08-31.md");
   });
 });
 
@@ -101,8 +119,8 @@ describe("CLAUDE.md contract", () => {
     expect(claude).not.toMatch(/test:e2e` \(40\)/);
   });
 
-  it("states the verified 32 files / 181 unit budget", () => {
-    expect(claude).toContain("32 files / 181");
+  it("states the verified 32 files / 184 unit budget", () => {
+    expect(claude).toContain("32 files / 184");
   });
 
   it("pins the built-artifact E2E config (round-9 E2E-L1)", () => {
