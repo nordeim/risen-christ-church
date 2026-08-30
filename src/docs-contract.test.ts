@@ -7,13 +7,15 @@ import { resolve } from "node:path";
  * four agent-facing docs must carry the verified Risen Christ contracts, not
  * the previous St Mary port. This guard pins the facts that most misled agents
  * during the round-6 audit; update it together with the docs when counts or
- * anchors legitimately change.
+ * anchors legitimately change. Round-7 audit remediation (2026-08-31) added
+ * CLAUDE.md coverage after its five-gate claim drifted to "test:e2e (40)".
  */
 const root = resolve(__dirname, "..");
 
 const skill = readFileSync(resolve(root, "risen-christ_SKILL.md"), "utf8");
 const readme = readFileSync(resolve(root, "README.md"), "utf8");
 const agents = readFileSync(resolve(root, "AGENTS.md"), "utf8");
+const claude = readFileSync(resolve(root, "CLAUDE.md"), "utf8");
 
 /**
  * The SKILL's contract region is everything before the historical appendices
@@ -54,10 +56,11 @@ describe("risen-christ_SKILL.md contract", () => {
   });
 
   it("Quick Reference Card carries the ported test state and Risen Christ facts", () => {
-    expect(skillQuickRef).toContain("32/175 + 48 E2E");
+    expect(skillQuickRef).toContain("32/179 + 48 E2E");
     expect(skillQuickRef).not.toContain("24/134");
     expect(skillQuickRef).not.toContain("42 E2E");
     expect(skillQuickRef).not.toContain("25/142");
+    expect(skillQuickRef).not.toContain("32/175");
     expect(skillQuickRef).not.toContain("T08CC4053H");
     expect(skillQuickRef).toContain("1969–2026 Toa Payoh");
   });
@@ -80,7 +83,18 @@ describe("AGENTS.md contract", () => {
     expect(agents).toContain("48 tests");
   });
 
-  it("states the verified 32 files / 175 unit budget", () => {
-    expect(agents).toContain("32 files / 175 tests");
+  it("states the verified 32 files / 179 unit budget", () => {
+    expect(agents).toContain("32 files / 179 tests");
+  });
+});
+
+describe("CLAUDE.md contract", () => {
+  it("states the five-command gate with the verified 48-test E2E budget (round-7 audit M-2)", () => {
+    expect(claude).toContain("(48)");
+    expect(claude).not.toMatch(/test:e2e` \(40\)/);
+  });
+
+  it("states the verified 32 files / 179 unit budget", () => {
+    expect(claude).toContain("32 files / 179");
   });
 });

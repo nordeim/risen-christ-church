@@ -1,6 +1,6 @@
 # Church of the Risen Christ
 
-![version 1.3.0](https://img.shields.io/badge/version-1.4.0-33100f)
+![version 1.4.1](https://img.shields.io/badge/version-1.4.1-33100f)
 ![React](https://img.shields.io/badge/React-19.2.8-61DAFB?logo=react&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-7.3.6-646CFF?logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.3.3-06B6D4?logo=tailwindcss&logoColor=white)
@@ -40,7 +40,7 @@ Every row below is implemented — no placeholders. Pages are named exports from
 | Icons | lucide-react | `1.34.0` | Header/footer + page iconography |
 | Utils | clsx + tailwind-merge | `2.1.1` / `3.6.0` | `cn()` class merging — always merge via `cn()` |
 | Bundling | vite-plugin-singlefile | `2.3.3` | Inlines JS+CSS into `dist/index.html` (`public/images/` copied to `dist/images/`) |
-| Testing | Vitest + Testing Library + jsdom | `3.2.6` / `16.2.0` / `26.1.0` | `vitest run` — **32 files / 175 tests** (`ci-workflow` 4 + `repo-hygiene` 2 + `docs-contract` 8 + `cn` 5 + `nav` 7 + `content` 10 + `site` 8 + `massDay` 5 + `monogram` 7 + `Button` 11 + `SkipLink` 3 + `Accordion` 6 + `SafeImage` 6 + `Header` 17 + `BackToTop` 7 + `Reveal` 2 + `Ministries` 3 + `cta-bands` 6 + `worship-mass` 5 + `about-visuals` 4 + `event-chips` 3 + `give-featured` 2 + `card-affordances` 6 + `Timeline` 3 + `NotFound` 2 + `History` 2 + `Layout` 2 + `useScrollProgress` 4 + `useScrollSpy` 4 + `ScrollProgress` 2 + `head` 13 + `security-headers` 6) via `src/test/setup.ts` |
+| Testing | Vitest + Testing Library + jsdom | `3.2.6` / `16.2.0` / `26.1.0` | `vitest run` — **32 files / 179 tests** (`ci-workflow` 4 + `repo-hygiene` 2 + `docs-contract` 10 + `cn` 5 + `nav` 7 + `content` 10 + `site` 8 + `massDay` 5 + `monogram` 7 + `Button` 11 + `SkipLink` 3 + `Accordion` 6 + `SafeImage` 6 + `Header` 17 + `BackToTop` 7 + `Reveal` 2 + `Ministries` 3 + `cta-bands` 6 + `worship-mass` 5 + `about-visuals` 4 + `event-chips` 3 + `give-featured` 2 + `card-affordances` 6 + `Timeline` 3 + `NotFound` 2 + `History` 2 + `Layout` 2 + `useScrollProgress` 4 + `useScrollSpy` 6 + `ScrollProgress` 2 + `head` 13 + `security-headers` 6) via `src/test/setup.ts` |
 | E2E | Playwright | `1.55.1` | `chromium`, `webServer` → `pnpm exec vite --port 5173 --host 127.0.0.1 --strictPort`, `e2e/` — **7 specs — 48 tests** (smoke 11 + navigation 8 + ministries 4 + give-faq 4 + enhancements 7 + enhancements-round5 6 + enhancements-round7 8) — Risen Christ (91 Toa Payoh Central, He is risen) |
 | Linting | ESLint flat + typescript-eslint + react-hooks | `9.39.5` / `8.28.0` / `5.2.0` | `eslint . --max-warnings 0`, `eslint.config.js` (ignores `dist`, `skills`, `src.orig`) |
 | Fonts | Google Fonts | — | `Fraunces` (display) + `Source Sans 3` (body) via `index.html` |
@@ -132,7 +132,7 @@ flowchart TB
 │   ├── 📂 utils/
 │   │   ├── 📄 cn.ts         # twMerge(clsx) — always merge via cn()
 │   │   └── 📄 massDay.ts    # massDayKey(date) — single source for the Worship today-highlight
-│   └── 📂 **/*.test.{ts,tsx} # 32 files / 175 tests — ported with Risen Christ fixtures (2026-08-31) + src/test/setup.ts
+│   └── 📂 **/*.test.{ts,tsx} # 32 files / 179 tests — ported with Risen Christ fixtures (2026-08-31) + src/test/setup.ts
 ├── 📂 e2e/                  # 7 specs — 48 tests: smoke.spec.ts (11) + navigation.spec.ts (8) + ministries.spec.ts (4) + give-faq.spec.ts (4) + enhancements.spec.ts (7) + enhancements-round5.spec.ts (6) + enhancements-round7.spec.ts (8) — Risen Christ (91 Toa Payoh Central)
 │   ├── 📄 smoke.spec.ts     # hero + rise-in entrance + Worship/Ministries aliases + hash anchors + NotFound + mobile drawer + event chips + back-to-top
 │   ├── 📄 navigation.spec.ts# desktop Worship/Ministries dropdown + keyboard + SkipLink + footer 10 links + Give + aria-current
@@ -154,7 +154,7 @@ flowchart TB
 └── 📄 AGENTS.md             # Compact agent cheat sheet
 ```
 
-Current audits — port + 2026-08-28 review + 2026-08-30 `src` vs `src.orig` validation (historical — St Mary) + **2026-08-31 Risen Christ port: lint 0 + typecheck 0 + 32/175 + 48 E2E + 395.59kB green** + **round-6 tiered review & security audit** (`docs/code-review-audit-round6-2026-08-31.md` — live-site E2E byte-identical to `dist/`, zero console errors; findings + remediation in `docs/remediation-plan-round6-2026-08-31.md`) + **round-7 design enhancement "Honest Light"** (`docs/design-enhancement-round7-2026-08-31.md` — skills-driven visual/UI/UX round: reveal resilience + print override, Worship sticky mercy column, News/FAQ closure bands, Give featured PayNow card, Ministries scrollspy, About list/link affordances, desktop nav gold hairline, `card-tint` info-card honesty, PageHero atmosphere; screenshots in `docs/audit-shots-round7/`) — 17 route entries / 16 content paths / 5 alias groups (7 paths) / 10 pages; 32 files / 175 tests + 48 E2E green via `src/test/setup.ts` + `e2e/`; singlefile `dist/index.html 395.59kB` + `dist/_headers` + `dist/favicon.svg` + `dist/images/8` (pinned exact, pnpm 11).
+Current audits — port + 2026-08-28 review + 2026-08-30 `src` vs `src.orig` validation (historical — St Mary) + **2026-08-31 Risen Christ port: lint 0 + typecheck 0 + 32/179 + 48 E2E + 395.66kB green (re-verified post round-7 audit remediation)** + **round-6 tiered review & security audit** (`docs/code-review-audit-round6-2026-08-31.md` — live-site E2E byte-identical to `dist/`, zero console errors; findings + remediation in `docs/remediation-plan-round6-2026-08-31.md`) + **round-7 design enhancement "Honest Light"** (`docs/design-enhancement-round7-2026-08-31.md` — skills-driven visual/UI/UX round: reveal resilience + print override, Worship sticky mercy column, News/FAQ closure bands, Give featured PayNow card, Ministries scrollspy, About list/link affordances, desktop nav gold hairline, `card-tint` info-card honesty, PageHero atmosphere; screenshots in `docs/audit-shots-round7/`) + **round-7 tiered audit** (`docs/code-review-audit-round7-2026-08-31.md` — six-phase audit of the round-7 commits, zero new C/H/M, live == dist md5; TDD remediation in `docs/remediation-plan-round7-2026-08-31.md` — scrollspy document-order tie-break + E2E sleep removal + docs re-pin) — 17 route entries / 16 content paths / 5 alias groups (7 paths) / 10 pages; 32 files / 179 tests + 48 E2E green via `src/test/setup.ts` + `e2e/`; singlefile `dist/index.html 395.66kB` + `dist/_headers` + `dist/favicon.svg` + `dist/images/8` (pinned exact, pnpm 11).
 
 ## Quick Start
 
@@ -200,7 +200,7 @@ pnpm test:e2e           # expect: 48 passed (chromium)
 | `pnpm dev` | Vite ready on `:5173`, HMR active |
 | `pnpm lint` | Exit `0`, no warnings (`--max-warnings 0`) |
 | `pnpm typecheck` | Exit `0`, no errors |
-| `pnpm test` | 32 files / 175 tests passed (jsdom) via `src/test/setup.ts` |
+| `pnpm test` | 32 files / 179 tests passed (jsdom) via `src/test/setup.ts` |
 | `pnpm test:e2e` | 48 passed — smoke 11 + navigation 8 + ministries 4 + give-faq 4 + enhancements 7 + enhancements-round5 6 + enhancements-round7 8 (Risen Christ copy) |
 | `pnpm build` | `dist/index.html` exists + `dist/images/` (8 files) |
 | `pnpm preview` | Prod preview on `:4173`, alias routes (`/mass-times`, `/ministry`, `/donate`, `/volunteer`…) + hash anchors (`#/worship#mass`, `#/ministries#liturgical`) navigate |
@@ -259,7 +259,7 @@ This repo follows the six-phase workflow in `CLAUDE.md` (ANALYZE → PLAN → VA
 - **Commits:** Conventional Commits — `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `style:` — atomic, subject ≤72 chars.
 - **Branches:** `feat/<slug>`, `fix/<slug>`, `docs/<slug>` — short-lived (1–3 days), squash-merge.
 - **Conventions:** `PascalCase.tsx` for components/pages, `camelCase.ts` for data/utils, `primaryNav` single-source, alias routes preserved, `cn()` for merges, `shrine-*` tokens only.
-- **Pre-push gate:** `pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build` — all five green (verified 2026-08-31: 32 files / 175 unit + 48 E2E; CI mirrors this in `.github/workflows/ci.yml` Node 24/pnpm 11).
+- **Pre-push gate:** `pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build` — all five green (verified 2026-08-31: 32 files / 179 unit + 48 E2E; CI mirrors this in `.github/workflows/ci.yml` Node 24/pnpm 11).
 
 > `skills/` is vendored reference content — pruned in round 3 (2026-08-30) and re-added in full in `0be0fe8` (2026-08-31, catalog + per-skill `SKILL.md` files present again); lint/build tooling ignores it regardless — do not import from or lint it. `src.orig/` is the **archived St Mary of the Angels port** (Rother → St Joseph → St Mary lineage), retained locally and untracked since round 3 (`.gitignore` active); its ignore entries are active guards. See `AGENTS.md` for the compact cheat sheet.
 
