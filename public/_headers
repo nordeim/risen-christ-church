@@ -1,10 +1,6 @@
-# Cloudflare Pages response headers — shipped to dist/ by Vite publicDir.
-# A static HTML artifact cannot set transport/security response headers; the
-# round-3 audit (docs/code-review-audit-round3-2026-08-30.md, M-2/L-1) found
-# the live deploy sent none of these. Ignored by non-CF hosts.
 /*
-  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   X-Content-Type-Options: nosniff
-  X-Frame-Options: DENY
+  X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
