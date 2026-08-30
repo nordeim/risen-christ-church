@@ -4,18 +4,18 @@ test.describe("Ministries — 6 sections", () => {
   test("6 sections render with imageAlt, summary, and details", async ({ page }) => {
     await page.goto("/#/ministries");
 
-    const ids = ["liturgical", "faith-formation", "pastoral-care", "family-life", "youth", "mandarin"];
+    const ids = ["liturgical", "faith-formation", "pastoral-care", "family-life", "youth", "language-communities"];
     for (const id of ids) {
       await expect(page.locator(`#${id}`)).toBeVisible();
     }
 
     await expect(page.locator("#liturgical").getByRole("img", { name: /sanctuary.*Mass/i })).toBeVisible();
     await expect(page.locator("#faith-formation").getByRole("img", { name: /parish hall|catechesis/i })).toBeVisible();
-    await expect(page.locator("#pastoral-care").getByRole("img", { name: /columbarium|remembrance/i })).toBeVisible();
+    await expect(page.locator("#pastoral-care").getByRole("img", { name: /memorial garden|Quiet memorial/i })).toBeVisible();
 
     await expect(page.locator("#liturgical").getByText(/Servers, singers/i).first()).toBeVisible();
-    await expect(page.locator("#faith-formation").getByText("Catechesis of the Good Shepherd").first()).toBeVisible();
-    await expect(page.locator("#pastoral-care").getByText(/Poor & Needy/i).first()).toBeVisible();
+    await expect(page.locator("#faith-formation").getByText(/F\.R\.E\.E\.|RCIA/i).first()).toBeVisible();
+    await expect(page.locator("#pastoral-care").getByText(/SSVP|Society of St Vincent/i).first()).toBeVisible();
   });
 
   test("image onError fallback to local hero", async ({ page }) => {
@@ -23,7 +23,7 @@ test.describe("Ministries — 6 sections", () => {
     await page.route("**/wikimedia.org/**", (route) => route.abort());
     await page.goto("/#/ministries");
 
-    const images = page.locator("#liturgical img, #faith-formation img, #pastoral-care img, #family-life img, #youth img, #mandarin img");
+    const images = page.locator("#liturgical img, #faith-formation img, #pastoral-care img, #family-life img, #youth img, #language-communities img");
     await expect(images.first()).toBeVisible();
     await page.waitForTimeout(600);
     const srcs = await images.evaluateAll((els: HTMLImageElement[]) => els.map((e) => e.src));
@@ -62,7 +62,7 @@ test.describe("Ministries — 6 sections", () => {
 
     await page.goto("/#/");
 
-    const chapelCard = page.getByRole("link", { name: /Adoration Chapel/i }).first();
+    const chapelCard = page.getByRole("link", { name: /Adoration Room/i }).first();
     await expect(chapelCard).toBeVisible();
     await chapelCard.click();
     await expect(page).toHaveURL(/#\/worship#visit/);

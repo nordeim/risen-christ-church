@@ -31,12 +31,12 @@ test.describe("Round-5 enhancement audit", () => {
     await gotoMain(page, "/give");
     const band = page.locator('main section[class*="bg-shrine-maroon-950"]').last();
     const h2 = band.getByRole("heading", {
-      name: /every gift keeps the hill a house of prayer/i,
+      name: /The 1971 church still needs its people/i,
     });
     await expect(h2).toBeVisible();
     // shrine-cream #faf6ec — the cta-bands contract extended to the new band.
     await expect(h2).toHaveCSS("color", "rgb(250, 246, 236)");
-    await expect(band.getByRole("link", { name: /write to the parish/i })).toBeVisible();
+    await expect(band.getByText(/Parish Office|Mon.*Fri|6253 2166/i).first()).toBeVisible();
   });
 
   test("history story column is sticky at desktop width", async ({ page }) => {

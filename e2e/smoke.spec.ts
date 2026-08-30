@@ -1,13 +1,13 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("smoke — routing & hash anchors", () => {
-  test("home renders hero and quick facts (St Mary)", async ({ page }) => {
+  test("home renders hero and quick facts (Risen Christ)", async ({ page }) => {
     await page.goto("/#/");
-    await expect(page.getByRole("heading", { name: /According to Thy Word/i })).toBeVisible();
-    await expect(page.getByText(/Bukit Batok/i).first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: /He is risen/i })).toBeVisible();
+    await expect(page.getByText(/Toa Payoh/i).first()).toBeVisible();
     await expect(page.getByText("Sunday").first()).toBeVisible();
     await expect(page.getByText("Feast").first()).toBeVisible();
-    await expect(page.getByText("Friars").first()).toBeVisible();
+    await expect(page.getByText(/Blessed/i).first()).toBeVisible();
   });
 
   test("Worship alias routes all render same page", async ({ page }) => {
@@ -19,10 +19,10 @@ test.describe("smoke — routing & hash anchors", () => {
 
   test("Ministries alias routes render same page", async ({ page }) => {
     await page.goto("/#/ministries");
-    await expect(page.getByRole("heading", { name: /From doing church to forming disciples/i }).first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Take a place in the household/i }).first()).toBeVisible();
 
     await page.goto("/#/ministry");
-    await expect(page.getByRole("heading", { name: /From doing church to forming disciples/i }).first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Take a place in the household/i }).first()).toBeVisible();
   });
 
   test("Worship hash anchors are reachable", async ({ page }) => {
@@ -99,7 +99,7 @@ test.describe("smoke — routing & hash anchors", () => {
     await page.goto("/#/");
     const hero = page.locator("section").first();
     await expect(hero.locator("h1")).toHaveClass(/rise-in rise-in-d1/);
-    await expect(hero.getByText(/A Franciscan parish since 1970/i)).toHaveClass(/rise-in/);
+    await expect(hero.getByText(/A parish since 1971/i)).toHaveClass(/rise-in/);
     await expect(hero.getByRole("link", { name: "Mass times" })).toBeVisible();
     // Entrance animations settle at full opacity (fill-mode both).
     await expect.poll(async () =>
@@ -111,13 +111,13 @@ test.describe("smoke — routing & hash anchors", () => {
   // category inside a bordered gold chip + display-serif date beside it.
   test("event cards render gold category chips", async ({ page }) => {
     await page.goto("/#/news-events");
-    const chips = page.locator("article span", { hasText: /^(Parish|Devotion|Formation|Archdiocese)$/ });
+    const chips = page.locator("span", { hasText: /^(Parish|Devotion|Formation|Archdiocese)$/ });
     await expect(chips.first()).toBeVisible();
     await expect(chips.first()).toHaveClass(/rounded-full/);
     await expect(chips.first()).toHaveClass(/text-shrine-(maroon|gold|pine|terracotta)-/);
-    // The date sits beside the chip in the display serif voice.
-    const date = chips.first().locator("xpath=following-sibling::span");
-    await expect(date).toHaveClass(/font-display/);
+    // The date sits beside the chip in the display serif voice (now <time>).
+    const wrapper = chips.first().locator("xpath=ancestor::div[1]");
+    await expect(wrapper.locator("time")).toHaveClass(/font-display/);
   });
 
   test("back-to-top appears after scrolling and returns to the top", async ({ page }) => {

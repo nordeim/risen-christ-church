@@ -1,39 +1,17 @@
 /**
- * Initials from a display name. Strips honorifics so
- * "Fr Brian D'Souza" → "BD" and "Friar Esmond Chua, OFM" → "EC".
+ * Round-5 (docs/design-enhancement-round5-2026-08-30.md P-5): initials
+ * monogram — first letters of the person's given name + surname, skipping
+ * honorifics and order suffixes ("Friar Esmond Chua, OFM" → "EC").
+ * Extracted to utils for testability — see audit R5-L2 / R5-M1.
  */
-const HONORIFICS = new Set([
-  "fr",
-  "fr.",
-  "rev",
-  "rev.",
-  "friar",
-  "bro",
-  "bro.",
-  "sr",
-  "sr.",
-  "ofm",
-  "ofm.",
-  "mdm",
-  "mdm.",
-  "mr",
-  "mr.",
-  "mrs",
-  "mrs.",
-  "ms",
-  "ms.",
-]);
+const MONOGRAM_TITLES = new Set(["friar", "fr", "rev", "father", "ofm"]);
 
 export function monogram(name: string): string {
-  const parts = name
-    .replace(/,/g, " ")
+  const words = name
     .split(/\s+/)
-    .filter((part) => part.length > 0 && !HONORIFICS.has(part.toLowerCase()));
-
-  if (parts.length === 0) return "";
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-
-  const first = parts[0][0];
-  const last = parts[parts.length - 1][0];
+    .map((word) => word.replace(/[^A-Za-z]/g, ""))
+    .filter((word) => word.length > 0 && !MONOGRAM_TITLES.has(word.toLowerCase()));
+  const first = words[0]?.[0] ?? "";
+  const last = words[words.length - 1]?.[0] ?? "";
   return `${first}${last}`.toUpperCase();
 }

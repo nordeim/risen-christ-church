@@ -24,7 +24,7 @@ Next, convert the plan into a detailed ToDo list before meticulously executing t
 
 please meticulously review @AGENTS.md , @CLAUDE.md , @README.md and @rothershrine-v2_SKILL.md to have a deep understanding of the project and its codebase design and architecture. Next, meticulously plan to validate your deep understanding against the codebase to check for alignment and to confirm the project status.
 
-in the current project folder, the original `src/` was moved to `src.orig/` and the current `src/` was rewritten for a port (migration) of `https://www.stmary.sg/` to the new design. so meticlously plan to adapt the project documentations, `AGENTS.md`, `CLAUDE.md`, `README.md` and `rothershrine-v2_SKILL.md` to the current (new) `src/`
+in the current project folder, the original `src/` was renamed to `src.orig/` and the current `src/` was rewritten for a port (migration) of `https://www.risenchrist.org.sg/` to the new design. so meticlously plan to adapt the project documentations, `AGENTS.md`, `CLAUDE.md`, `README.md` and `st-mary-of-angels_SKILL.md` to the current (new) `src/`
 
 please meticulously plan to validate that the new codebase represented by folder `src/` has adopted and improved upon all the good design elements and practices from the old codebase represented by `src.orig/`.
 
