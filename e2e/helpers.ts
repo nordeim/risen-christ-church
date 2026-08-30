@@ -2,7 +2,7 @@ import { expect, type Page } from "@playwright/test";
 
 /**
  * Navigate to a HashRouter URL via baseURL + hash.
- * Example: gotoHash(page, "/what-to-see#pilgrim-center") → /#/what-to-see#pilgrim-center
+ * Example: gotoHash(page, "/worship#mass") → /#/worship#mass
  */
 export async function gotoHash(page: Page, hash: string) {
   const clean = hash.startsWith("/") ? hash : `/${hash}`;
