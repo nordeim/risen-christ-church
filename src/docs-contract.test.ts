@@ -30,11 +30,12 @@ describe("risen-christ_SKILL.md contract", () => {
     expect(skillContract).not.toMatch(/#mandarin\b/);
   });
 
-  it("advertises the verified 40-test E2E budget (not 42)", () => {
-    expect(skillContract).toContain("40 E2E");
+  it("advertises the verified 48-test E2E budget (not 42)", () => {
+    expect(skillContract).toContain("48 E2E");
     expect(skillContract).not.toMatch(/42 E2E/);
     expect(skillContract).not.toContain("24/134");
     expect(skillContract).not.toContain("25/141");
+    expect(skillContract).not.toContain("25/142");
   });
 
   it("carries no St Mary parish identity as current facts", () => {
@@ -53,9 +54,10 @@ describe("risen-christ_SKILL.md contract", () => {
   });
 
   it("Quick Reference Card carries the ported test state and Risen Christ facts", () => {
-    expect(skillQuickRef).toContain("25/142 + 40 E2E");
+    expect(skillQuickRef).toContain("32/175 + 48 E2E");
     expect(skillQuickRef).not.toContain("24/134");
     expect(skillQuickRef).not.toContain("42 E2E");
+    expect(skillQuickRef).not.toContain("25/142");
     expect(skillQuickRef).not.toContain("T08CC4053H");
     expect(skillQuickRef).toContain("1969–2026 Toa Payoh");
   });
@@ -74,11 +76,11 @@ describe("README.md contract", () => {
 });
 
 describe("AGENTS.md contract", () => {
-  it("states the verified 40-test E2E budget", () => {
-    expect(agents).toContain("40 tests");
+  it("states the verified 48-test E2E budget", () => {
+    expect(agents).toContain("48 tests");
   });
 
-  it("states the verified 25 files / 142 unit budget", () => {
-    expect(agents).toContain("25 files / 142 tests");
+  it("states the verified 32 files / 175 unit budget", () => {
+    expect(agents).toContain("32 files / 175 tests");
   });
 });
