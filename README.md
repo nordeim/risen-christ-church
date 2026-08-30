@@ -96,12 +96,14 @@ flowchart TB
 ├── 📄 index.html            # lang, viewport, meta description (Risen Christ 91 Toa Payoh Central), CSP `img-src 'self' data: blob:` only, Google Fonts (Fraunces + Source Sans 3), #root + Church JSON-LD
 ├── 📄 eslint.config.js      # flat config (typescript-eslint 8 + react-hooks 5 + react-refresh) — ignores [dist, node_modules, coverage, playwright-report, test-results, skills, src.orig]
 ├── 📄 playwright.config.ts  # Playwright 1.55 (chromium, webServer → pnpm exec vite :5173, expect timeout 15s)
-├── 📄 vite.config.ts        # plugins [react, tailwindcss, viteSingleFile] + alias @→src + test {globals, jsdom, setupFiles: src/test/setup.ts (missing), include: src/**/*.{test,spec}.{ts,tsx}, exclude: e2e/** } + server.watch.ignored [skills/**, dist/**, playwright-report/**, test-results/**, coverage/**, src.orig/**]
+├── 📄 vite.config.ts        # plugins [react, tailwindcss, viteSingleFile] + alias @→src + test {globals, jsdom, setupFiles: src/test/setup.ts, include: src/**/*.{test,spec}.{ts,tsx}, exclude: e2e/** } + server.watch.ignored [skills/**, dist/**, playwright-report/**, test-results/**, coverage/**, src.orig/**]
 ├── 📄 tsconfig.json         # ES2020 / ESNext / bundler / strict + noUnusedLocals/noUnusedParameters/noFallthroughCasesInSwitch/isolatedModules/noEmit + include [src, vite.config.ts, eslint.config.js, playwright.config.ts] + types [node, vitest/globals] + paths @/*
 ├── 📄 package.json          # scripts: dev / build / preview / typecheck / lint / test / test:e2e / test:watch + pnpm@11.0.0 + engines node>=20 (all deps pinned exact)
 ├── 📄 pnpm-lock.yaml        # committed — deterministic installs via `pnpm install --frozen-lockfile` (CI)
 ├── 📂 public/
-│   └── 📂 images/           # 8 files: hero-church.jpg, chapel-interior.jpg, sanctuary.jpg, rosary-garden.jpg, stained-glass.jpg, parish-hall.jpg, cemetery.jpg, feast.jpg (Vite publicDir → dist/images/ — upload alongside dist/index.html); all local — CDN keys hero/naveCdn/courtyardCdn point to local fallbacks. Sibling `public/_headers` ships Cloudflare Pages security headers
+│   ├── 📂 images/           # 8 files: hero-church.jpg, chapel-interior.jpg, sanctuary.jpg, rosary-garden.jpg, stained-glass.jpg, parish-hall.jpg, cemetery.jpg, feast.jpg (Vite publicDir → dist/images/ — upload alongside dist/index.html); all local — CDN keys hero/naveCdn/courtyardCdn point to local fallbacks
+│   ├── 📄 _headers          # Cloudflare Pages security headers (HSTS/XCTO/XFO/Referrer-Policy/Permissions-Policy) → dist/_headers — honored only on Cloudflare Pages deploys
+│   └── 📄 favicon.svg        # inline SVG favicon → dist/favicon.svg (referenced by index.html `<link rel="icon">`)
 ├── 📂 src/
 │   ├── 📄 App.tsx           # HashRouter + 17 Route entries (16 content paths + * → NotFound; 5 alias groups / 7 alias paths; hash anchors #mass/#confession/#visit + 6 ministry ids)
 │   ├── 📄 main.tsx          # StrictMode + createRoot
@@ -130,14 +132,15 @@ flowchart TB
 │   ├── 📂 utils/
 │   │   ├── 📄 cn.ts         # twMerge(clsx) — always merge via cn()
 │   │   └── 📄 massDay.ts    # massDayKey(date) — single source for the Worship today-highlight
-│   └── 📂 **/*.test.{ts,tsx} # (0 files — not yet ported) historical St Mary suite 25/141 retained in src.orig
+│   └── 📂 **/*.test.{ts,tsx} # 25 files / 142 tests — ported with Risen Christ fixtures (2026-08-31) + src/test/setup.ts
 ├── 📂 e2e/                  # 6 specs — 40 tests: smoke.spec.ts (11) + navigation.spec.ts (8) + ministries.spec.ts (4) + give-faq.spec.ts (4) + enhancements.spec.ts (7) + enhancements-round5.spec.ts (6) — Risen Christ (91 Toa Payoh Central)
-│   ├── 📄 smoke.spec.ts     # hero + rise-in entrance + Worship/Ministries aliases + hash anchors + NotFound + mobile drawer + event chips + back-to-top — STALE
-│   ├── 📄 navigation.spec.ts# desktop Worship/Ministries dropdown + keyboard + SkipLink + footer 10 links + Give + aria-current — STALE
-│   ├── 📄 ministries.spec.ts# 6 sections + jump nav + imageAlt — STALE
-│   ├── 📄 give-faq.spec.ts  # Give 8 options + FAQ accordion + Worship Find Us + maps — STALE
+│   ├── 📄 smoke.spec.ts     # hero + rise-in entrance + Worship/Ministries aliases + hash anchors + NotFound + mobile drawer + event chips + back-to-top
+│   ├── 📄 navigation.spec.ts# desktop Worship/Ministries dropdown + keyboard + SkipLink + footer 10 links + Give + aria-current
+│   ├── 📄 ministries.spec.ts# 6 sections + jump nav + imageAlt
+│   ├── 📄 give-faq.spec.ts  # Give 8 options + FAQ accordion + Worship Find Us + maps
+│   ├── 📄 enhancements.spec.ts + enhancements-round5.spec.ts # motion/chip/ring/sticky contracts
 │   └── 📄 helpers.ts        # gotoHash + expectHash helpers
-├── 📄 .github/workflows/ci.yml # CI: lint → typecheck → build (Node 24, pnpm 11) — test/test:e2e commented out until ported
+├── 📄 .github/workflows/ci.yml # CI: lint → typecheck → test → test:e2e → build + artifacts (Node 24, pnpm 11) — guarded by src/ci-workflow.test.ts
 ├── 📂 docs/
 │   ├── 📄 prompts.md        # Intent lineage
 │   ├── 📄 validation-src-vs-src.orig-2026-08-30.md # Historical validation (St Mary 10/10 contracts adopted — retained for lineage)
@@ -151,7 +154,7 @@ flowchart TB
 └── 📄 AGENTS.md             # Compact agent cheat sheet
 ```
 
-Current audits — port + 2026-08-28 review + 2026-08-30 `src` vs `src.orig` validation (historical — St Mary) + **2026-08-31 Risen Christ port: lint 0 + typecheck 0 + 25/142 + 40 E2E + 388.44kB green** — 17 route entries / 16 content paths / 5 alias groups (7 paths) / 10 pages; 25 files / 142 tests + 40 E2E green via `src/test/setup.ts` + `e2e/`; singlefile `dist/index.html 388.44kB` + `dist/_headers` + `dist/images/8` (pinned exact, pnpm 11).
+Current audits — port + 2026-08-28 review + 2026-08-30 `src` vs `src.orig` validation (historical — St Mary) + **2026-08-31 Risen Christ port: lint 0 + typecheck 0 + 25/142 + 40 E2E + 388.44kB green** + **round-6 tiered review & security audit** (`docs/code-review-audit-round6-2026-08-31.md` — live-site E2E byte-identical to `dist/`, zero console errors; findings + remediation in `docs/remediation-plan-round6-2026-08-31.md`) — 17 route entries / 16 content paths / 5 alias groups (7 paths) / 10 pages; 25 files / 142 tests + 40 E2E green via `src/test/setup.ts` + `e2e/`; singlefile `dist/index.html 388.44kB` + `dist/_headers` + `dist/favicon.svg` + `dist/images/8` (pinned exact, pnpm 11).
 
 ## Quick Start
 
@@ -188,7 +191,8 @@ pnpm typecheck         # tsc --noEmit — expect no output (clean)
 pnpm build              # expect: "✓ built in ~3s" + "Inlining: index-*.js / style-*.css"
 ls -lh dist/index.html  # expect: single HTML file, no separate assets chunk
 ls -lh dist/images/     # expect: 8 images (hero-church + chapel-interior + sanctuary + rosary-garden + stained-glass + parish-hall + cemetery + feast)
-# tests not yet ported — pnpm test → "No test files found" (expected until port)
+pnpm test               # expect: 25 test files / 142 tests passed
+pnpm test:e2e           # expect: 40 passed (chromium)
 ```
 
 | Check | Expected |
@@ -196,8 +200,8 @@ ls -lh dist/images/     # expect: 8 images (hero-church + chapel-interior + sanc
 | `pnpm dev` | Vite ready on `:5173`, HMR active |
 | `pnpm lint` | Exit `0`, no warnings (`--max-warnings 0`) |
 | `pnpm typecheck` | Exit `0`, no errors |
-| `pnpm test` | `No test files found` — St Mary suite 25/141 retained in `src.orig`; Risen Christ port pending |
-| `pnpm test:e2e` | Stale — still asserts St Mary copy (`5 Bukit Batok…`); must be ported for Risen Christ |
+| `pnpm test` | 25 files / 142 tests passed (jsdom) via `src/test/setup.ts` |
+| `pnpm test:e2e` | 40 passed — smoke 11 + navigation 8 + ministries 4 + give-faq 4 + enhancements 7 + enhancements-round5 6 (Risen Christ copy) |
 | `pnpm build` | `dist/index.html` exists + `dist/images/` (8 files) |
 | `pnpm preview` | Prod preview on `:4173`, alias routes (`/mass-times`, `/ministry`, `/donate`, `/volunteer`…) + hash anchors (`#/worship#mass`, `#/ministries#liturgical`) navigate |
 
@@ -234,7 +238,7 @@ Tokens live in `src/index.css` `@theme`. Extend there — never use arbitrary `b
 
 ## Deployment
 
-Primary artifact `dist/index.html` (+ `dist/images/` — 8 files, + `dist/_headers`) — no server, no env vars, no rewrites needed. The artifact ships a scoped `Content-Security-Policy` meta (`img-src 'self' data: blob:` only, `object-src 'none'`, `base-uri 'self'`, Google Fonts, `frame-src` Google Maps) + a `Referrer-Policy` meta. `public/_headers` adds the host-level headers a static file cannot set (HSTS, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`) on Cloudflare Pages.
+Primary artifact `dist/index.html` (+ `dist/images/` — 8 files, + `dist/_headers`) — no server, no env vars, no rewrites needed. The artifact ships a scoped `Content-Security-Policy` meta (`img-src 'self' data: blob:` only, `object-src 'none'`, `base-uri 'self'`, Google Fonts, `frame-src` Google Maps) + a `Referrer-Policy` meta. `public/_headers` adds the host-level headers a static file cannot set (HSTS, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`) — **on Cloudflare Pages only**. ⚠️ Verified 2026-08-31 (round-6 audit H1): the current host `risen-christ.jesspete.shop` (Cloudflare-proxied origin, not Pages) serves **none** of these headers. Ops remediation: deploy `dist/` to Cloudflare Pages, or add the five headers via Cloudflare Transform Rules / origin config.
 
 CSP (current `index.html`): `img-src 'self' data: blob:` + `script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com` + `object-src 'none'` + `base-uri 'self'` + `frame-src https://www.google.com` + `style-src https://fonts.googleapis.com`; `<meta name="referrer" content="strict-origin-when-cross-origin">`.
 
@@ -255,9 +259,9 @@ This repo follows the six-phase workflow in `CLAUDE.md` (ANALYZE → PLAN → VA
 - **Commits:** Conventional Commits — `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `style:` — atomic, subject ≤72 chars.
 - **Branches:** `feat/<slug>`, `fix/<slug>`, `docs/<slug>` — short-lived (1–3 days), squash-merge.
 - **Conventions:** `PascalCase.tsx` for components/pages, `camelCase.ts` for data/utils, `primaryNav` single-source, alias routes preserved, `cn()` for merges, `shrine-*` tokens only.
-- **Pre-push gate:** `pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build` — all three green (tests excluded until ported — CI mirrors this in `.github/workflows/ci.yml` Node 24/pnpm 11). After port: `pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build` (St Mary suite was 25/141 + 42 E2E).
+- **Pre-push gate:** `pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build` — all five green (verified 2026-08-31: 25 files / 142 unit + 40 E2E; CI mirrors this in `.github/workflows/ci.yml` Node 24/pnpm 11).
 
-> `skills/` is committed-but-pruned vendored reference content — round 3 (2026-08-30) removed the agent-skills index (`skills/skills-catalog.md`) and all per-skill `SKILL.md` files from tracking (full historical tree retrievable at `c774ed9`); lint/build tooling ignores what remains. `src.orig/` is the **archived St Mary of the Angels port** (Rother → St Joseph → St Mary lineage), retained locally and untracked since round 3 (`.gitignore` active); its ignore entries are active guards. See `AGENTS.md` for the compact cheat sheet.
+> `skills/` is vendored reference content — pruned in round 3 (2026-08-30) and re-added in full in `0be0fe8` (2026-08-31, catalog + per-skill `SKILL.md` files present again); lint/build tooling ignores it regardless — do not import from or lint it. `src.orig/` is the **archived St Mary of the Angels port** (Rother → St Joseph → St Mary lineage), retained locally and untracked since round 3 (`.gitignore` active); its ignore entries are active guards. See `AGENTS.md` for the compact cheat sheet.
 
 ## Troubleshooting
 
@@ -269,8 +273,8 @@ This repo follows the six-phase workflow in `CLAUDE.md` (ANALYZE → PLAN → VA
 | Bare `href="#mass"` routes to NotFound | Use `<Link to="/worship#mass">` (or `/ministries#liturgical`) — plain `#id` replaces the `HashRouter` hash and routes to `*`. |
 | `tsc --noEmit` fails on unused var | `noUnusedLocals/Params` is `true` — remove or prefix with `_` only if intentionally unused. |
 | External image not loading | `SafeImage` falls back to `fallback` (default `/images/hero-church.jpg`) via `dataset.fallback` guard; current `images.*` are all local. |
-| `pnpm test` finds 0 tests | Expected — `src/` has 0 `*.test.*` files (St Mary suite retained in `src.orig/`); restore `src/test/setup.ts` + port tests with Risen Christ fixtures before gating. |
-| `pnpm test:e2e` | 40 passed (smoke 11 + navigation 8 + ministries 4 + give-faq 4 + enhancements 7 + enhancements-round5 6) — run `pnpm test:e2e:ui` to inspect |
+| `pnpm test` finds 0 tests | Not expected since the 2026-08-31 port — verify `vite.config.ts` `test.include` covers `src/**/*.{test,spec}.{ts,tsx}` and `src/test/setup.ts` exists. |
+| `pnpm test:e2e` | 40 passed (smoke 11 + navigation 8 + ministries 4 + give-faq 4 + enhancements 7 + enhancements-round5 6); run `pnpm test:e2e:ui` to inspect |
 
 ## License
 

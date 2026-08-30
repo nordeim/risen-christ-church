@@ -62,7 +62,7 @@ Apply to every non-trivial task. Do not skip VALIDATE.
 - **Env vars:** `VITE_*` prefix for client-exposed vars. Access via `import.meta.env.VITE_*`.
 - Import alias configured in `vite.config.ts` via `path.resolve(__dirname, "src")`. Keep `tsconfig.json` `paths` + `baseUrl` in sync.
 - Build is single-file: `viteSingleFile()` inlines JS+CSS (not `publicDir`). Avoid dynamic `import()` that assumes code-splitting unless you remove the plugin intentionally. `public/images/` is copied verbatim to `dist/images/` — upload both `dist/index.html` + `dist/images/` on deploy.
-- `test` in `vite.config.ts` — `{ globals: true, environment: "jsdom", setupFiles: ["src/test/setup.ts"], include: ["src/**/*.{test,spec}.{ts,tsx}"], exclude: ["e2e/**", "node_modules/**", "playwright-report/**", "test-results/**"] }` — keeps `e2e/**` out of unit runs. **Note:** `src/test/setup.ts` is currently **missing** (no tests ported yet) — `pnpm test` exits 1 with `No test files found`. Restore the setup file when porting tests from `src.orig`.
+- `test` in `vite.config.ts` — `{ globals: true, environment: "jsdom", setupFiles: ["src/test/setup.ts"], include: ["src/**/*.{test,spec}.{ts,tsx}"], exclude: ["e2e/**", "node_modules/**", "playwright-report/**", "test-results/**"] }` — keeps `e2e/**` out of unit runs. **Note:** `src/test/setup.ts` exists (jest-dom + IntersectionObserver mock + scrollTo/scrollIntoView stubs + matchMedia stub, with Risen Christ fixtures) — `pnpm test` runs the 25 files / 142 unit suite.
 - `server.watch.ignored: ["**/skills/**","**/dist/**","**/playwright-report/**","**/test-results/**","**/coverage/**","**/src.orig/**"]` — prevents `ENOSPC` from the vendored `skills/` tree (large `.venv`) and archived `src.orig/` (St Mary of the Angels port).
 
 #### React 19 + React Router 7
@@ -168,9 +168,9 @@ No backend, no DB, no `.env` contract yet. If env vars are added, document them 
 | `pnpm test:e2e` / `npm run test:e2e` | Playwright `chromium` — `playwright test` (6 specs — 40 tests: smoke 11 + navigation 8 + ministries 4 + give-faq 4 + enhancements 7 + enhancements-round5 6) | ✅ | Risen Christ copy (91 Toa Payoh Central, He is risen, Velankanni, Toa Payoh NS19) |
 | `pnpm test:e2e:ui` | Playwright UI mode (`playwright test --ui`) | ✅ | |
 | `pnpm test:e2e:report` | Open last Playwright HTML report (`playwright show-report`) | ✅ | |
-| `pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build` | **Pre-push gate — all three must be green** | ✅ | Mirrored in CI (`.github/workflows/ci.yml`): lint → typecheck → build + artifacts. `test`/`test:e2e` re-added after port |
+| `pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build` | **Pre-push gate — all five must be green** | ✅ | Mirrored in CI (`.github/workflows/ci.yml`): lint → typecheck → test → test:e2e → build + artifacts |
 
-> Before documenting a command as available, verify it in `package.json` scripts. Gate is currently `lint && typecheck && build` — `test`/`test:e2e` re-added after Risen Christ data port.
+> Before documenting a command as available, verify it in `package.json` scripts. The five-command gate is fully active (unit 25 files / 142 tests + 40 E2E green since the 2026-08-31 port).
 
 ### Adding Tooling
 
@@ -195,7 +195,7 @@ Conventions: `*.test.tsx` adjacent to source, `__mocks__` only when isolating `r
 ### When to Add More Tests (beyond the rewrite)
 
 - Port `src.orig` pure-helper tests first (`cn`, `massDay`, `monogram`, `nav`, `content`, `site`) with Risen Christ fixtures — highest value, lowest churn.
-- Routing contract — `App.tsx` alias routes + hash anchors integration (MemoryRouter) — currently covered by stale `e2e/smoke.spec.ts` for St Mary paths; port for Risen Christ before gating.
+- Routing contract — `App.tsx` alias routes + hash anchors integration — covered by `e2e/smoke.spec.ts` + `e2e/navigation.spec.ts` for Risen Christ paths (ported 2026-08-31).
 - Critical journeys — expand `e2e/` beyond smoke: devotion flows, map embed (`91 Toa Payoh Central`), Adoration Room hours, Media Centre, language Masses, SSVP/CEP/F.R.E.E. links.
 - Visual / a11y — add `axe` scan + `playwright` trace/video (already `on-first-retry`).
 
@@ -205,13 +205,14 @@ Conventions: `*.test.tsx` adjacent to source, `__mocks__` only when isolating `r
 
 `eslint 9.39.5` flat config (`eslint.config.js`) — `typescript-eslint 8.28.0` + `eslint-plugin-react-hooks 5.2.0` + `eslint-plugin-react-refresh 0.4.19` + `globals 16.1.0` (ignores `dist`, `node_modules`, `coverage`, `playwright-report`, `test-results`, `skills`, `src.orig`). Run `pnpm lint` (`eslint . --max-warnings 0`) and `pnpm lint:fix` (`eslint . --fix`) for auto-fix.
 
-Gate for pre-ship (currently 3-step — tests re-added after port):
+Gate for pre-ship (all five steps active):
 
 ```bash
 pnpm lint               # eslint flat — no warnings
 pnpm typecheck          # tsc --noEmit
+pnpm test               # vitest run — 25 files / 142 tests
+pnpm test:e2e           # playwright chromium — 40 tests
 pnpm build              # vite build — singlefile inlines correctly
-# after port: pnpm test && pnpm test:e2e
 ```
 
 ### Type Safety
@@ -247,11 +248,10 @@ Gate before pushing `main` (mirrored in CI — `.github/workflows/ci.yml`):
 ```bash
 pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build
 git push origin main
-# after port: pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build
 ```
 
 **CI (`.github/workflows/ci.yml`)** — triggers on `push`/`pull_request` to `main`, `concurrency: group: ci-${{ github.ref }}, cancel-in-progress: true`, `runs-on: ubuntu-latest`, `timeout-minutes: 15`:
-`actions/checkout@v4` → `pnpm/action-setup@v4` (`version: 11`) → `actions/setup-node@v4` (`node-version: 24`, `cache: pnpm`) → `pnpm install --frozen-lockfile` → `pnpm lint` → `pnpm typecheck` → `pnpm build` → artifacts: `dist/` (always, `retention-days: 7`). `test`/`test:e2e` steps are commented out until Risen Christ data port (historical workflow retained in git history).
+`actions/checkout@v4` → `pnpm/action-setup@v4` (`version: 11`) → `actions/setup-node@v4` (`node-version: 24`, `cache: pnpm`) → `pnpm install --frozen-lockfile` → `pnpm lint` → `pnpm typecheck` → `pnpm test` → `npx playwright install --with-deps chromium` → `pnpm test:e2e` → `pnpm build` → artifacts: `dist/` (always, `retention-days: 7`) + `playwright-report/` (on failure, `retention-days: 14`). Trigger contract guarded by `src/ci-workflow.test.ts`.
 
 Primary artifact `dist/index.html` (+ `dist/images/` copied from `public/` — `viteSingleFile` inlines JS+CSS, not `publicDir`) deploys directly to GitHub Pages (via `gh-pages` branch or `dist` artifact — upload both) or S3 — `HashRouter` avoids 404s on static hosts (deep links `/#/worship`, `/#/ministries#liturgical` resolve without a `404.html` redirect).
 
@@ -275,7 +275,7 @@ Primary artifact `dist/index.html` (+ `dist/images/` copied from `public/` — `
 ### Architecture
 
 ```
-src/ (38 source files — tests not yet ported)
+src/ (38 source files + 25 test files + 1 setup — all ported and green)
   App.tsx                # HashRouter + route table: 17 Route entries (16 content paths + * NotFound), 5 alias groups / 7 alias paths + 9 hash anchors (Layout outlet)
   main.tsx               # StrictMode + createRoot
   index.css              # Tailwind v4 @theme (24 colors + 2 shadows) + @layer base/utilities (26 utilities: text-balance, bg-adobe-texture, bg-gold-bloom, bg-grain, divider-weave, divider-weave-thin, gold-rule, gold-rule-left, hero-ken-burns, img-zoom, mask-fade-b, reveal, reveal-visible, rise-in + rise-in-d1..d4, menu-in, drawer-in, drawer-item-in, page-in, dot-pulse, card-lift, link-underline, skip-link + 8 keyframes gold-rule-draw/hero-ken-burns/rise-in/menu-in/drawer-in/drawer-item-in/page-in/halo-pulse + themed scrollbar (maroon thumb on parchment track, webkit + scrollbar-color))
@@ -307,7 +307,7 @@ src/ (38 source files — tests not yet ported)
   utils/
     cn.ts                # twMerge(clsx) — always merge via cn()
   test/
-    setup.ts             # (missing — not yet ported) vitest jsdom setup (jest-dom + IntersectionObserver mock + scrollTo/scrollIntoView stubs + matchMedia stub) — restore from src.orig/test/setup.ts when porting
+    setup.ts             # vitest jsdom setup (jest-dom + IntersectionObserver mock + scrollTo/scrollIntoView stubs + matchMedia stub, Risen Christ fixtures)
   **/*.test.{ts,tsx}     # 25 files / 142 tests: utils/cn (5), data/nav (7), data/content (10), data/site (8), utils/massDay (5), utils/monogram (7), ui/Button (11), SkipLink (3), ui/Accordion (6), SafeImage (6), Header (16), BackToTop (7), pages/Ministries (3), pages/cta-bands (4), pages/worship-mass (4), pages/about-visuals (3), pages/event-chips (3), components/Timeline (3), pages/NotFound (2), pages/History (2), Layout (2), hooks/useScrollProgress (4), ScrollProgress (2), head (13), security-headers (6)
 public/
   images/ (8)            # hero-church.jpg, chapel-interior.jpg, sanctuary.jpg, rosary-garden.jpg, stained-glass.jpg, parish-hall.jpg, cemetery.jpg, feast.jpg (Vite publicDir → dist/images/ — upload alongside dist/index.html); all images local — CDN keys hero/naveCdn/courtyardCdn now point to local fallbacks (no legacy wikimedia/pexels allowlist)
@@ -317,8 +317,8 @@ tsconfig.json            # strict + noUnusedLocals/noUnusedParameters/noFallthro
 eslint.config.js         # flat config (typescript-eslint 8 + react-hooks 5 + react-refresh); ignores [dist, node_modules, coverage, playwright-report, test-results, skills, src.orig]
 playwright.config.ts     # Playwright 1.55.1 (chromium, webServer → pnpm exec vite :5173, expect timeout 15s; CSP is a meta tag in index.html, not a config header)
 index.html               # Google Fonts Fraunces + Source Sans 3; CSP `img-src 'self' data: blob:` only + `object-src 'none'` + `base-uri 'self'` + `frame-src https://www.google.com`; favicon.svg + theme-color maroon-950 + full OG (url https://www.risenchrist.org.sg/ / site_name Church of the Risen Christ / locale en_SG / image hero-church + alt) + twitter summary_large_image + Church JSON-LD (name/alternateName [Risen Christ Toa Payoh/耶稣复活堂]/address 91 Toa Payoh/319193/hours/sameAs + telephone 6253 2166 — drift-checked against site.ts by src/head.test.ts when ported); base description first air-con 1971 + viewport; #root + /src/main.tsx
-e2e/ (6 specs — stale)   # smoke + navigation + ministries + give-faq + enhancements + enhancements-round5 + helpers.ts — St Mary assertions (5 Bukit Batok, WOHA, Portiuncula) must be ported for Risen Christ (91 Toa Payoh, first air-con, Velankanni)
-.github/workflows/ci.yml # CI: lint → typecheck → build + artifacts (Node 24, pnpm 11, pnpm-lock committed, --frozen-lockfile) — test/test:e2e commented out until ported
+e2e/ (6 specs — 40 tests green) # smoke + navigation + ministries + give-faq + enhancements + enhancements-round5 + helpers.ts — Risen Christ assertions (91 Toa Payoh, first air-con, Velankanni, He is risen)
+.github/workflows/ci.yml # CI: lint → typecheck → test → test:e2e → build + artifacts (Node 24, pnpm 11, pnpm-lock committed, --frozen-lockfile)
 
 ### File Organization & Naming
 
@@ -326,7 +326,7 @@ e2e/ (6 specs — stale)   # smoke + navigation + ministries + give-faq + enhanc
 - Data/utils: `camelCase.ts` (`content.ts`, `site.ts`, `nav.ts`, `cn.ts`).
 - Pages: `PascalCase.tsx` matching route intent (`About.tsx`, `History.tsx`, `Worship.tsx`, `Ministries.tsx`, `NewsEvents.tsx`, `Serve.tsx`, `Give.tsx`, `FAQ.tsx`, `NotFound.tsx`) — 10 pages, all named exports (`Home`, `About`, `History`, `Worship`, `Ministries`, `NewsEvents`, `Serve`, `Give`, `FAQ`, `NotFound`).
 - Assets: `public/images/<slug>.jpg` (8 files) — reference as `/images/<slug>.jpg` (absolute from root, Vite `publicDir` → `dist/images/` — upload alongside `dist/index.html`; singlefile inlines JS+CSS, not `public/`). Local keys: `hero`/`heroFallback`/`chapel`/`sanctuary`/`garden`/`glass`/`hall`/`cemetery`/`feast`; `naveCdn`/`courtyardCdn` now alias local `sanctuary`/`garden`.
-- Tests: `*.test.{ts,tsx}` adjacent to source — **25 files / 142 tests in `src`** (ported 2026-08-31 from `src.orig` 25/141): `src/utils/cn.test.ts` (5), `src/data/nav.test.ts` (7), `src/data/content.test.ts` (10), `src/data/site.test.ts` (7), `src/utils/massDay.test.ts` (5), `src/utils/monogram.test.ts` (7), `src/components/ui/Button.test.tsx` (11), `src/components/SkipLink.test.tsx` (3), `src/components/ui/Accordion.test.tsx` (6), `src/components/SafeImage.test.tsx` (6), `src/components/Header.test.tsx` (16), `src/components/BackToTop.test.tsx` (7), `src/components/Layout.test.tsx` (2), `src/components/ScrollProgress.test.tsx` (2), `src/hooks/useScrollProgress.test.ts` (4), `src/pages/Ministries.test.tsx` (3), `src/pages/cta-bands.test.tsx` (4), `src/pages/worship-mass.test.tsx` (4), `src/pages/about-visuals.test.tsx` (3), `src/pages/event-chips.test.tsx` (3), `src/pages/NotFound.test.tsx` (2), `src/pages/History.test.tsx` (2), `src/components/Timeline.test.tsx` (3), `src/head.test.ts` (13), `src/security-headers.test.ts` (6) + `src/test/setup.ts` (Risen Christ fixtures: priests 3 + ppc 7 + 91 Toa Payoh Central + UEN 4042G + Easter). `vite.config.ts` `test.exclude` keeps `e2e/**` out; `e2e/*.spec.ts` 40 tests are Playwright only. `vite.config.ts` `test.exclude` keeps `e2e/**` out of unit runs; `e2e/*.spec.ts` is Playwright only.
+- Tests: `*.test.{ts,tsx}` adjacent to source — **25 files / 142 tests in `src`** (ported 2026-08-31 with Risen Christ fixtures): `src/utils/cn.test.ts` (5), `src/data/nav.test.ts` (7), `src/data/content.test.ts` (10), `src/data/site.test.ts` (8), `src/utils/massDay.test.ts` (5), `src/utils/monogram.test.ts` (7), `src/components/ui/Button.test.tsx` (11), `src/components/SkipLink.test.tsx` (3), `src/components/ui/Accordion.test.tsx` (6), `src/components/SafeImage.test.tsx` (6), `src/components/Header.test.tsx` (16), `src/components/BackToTop.test.tsx` (7), `src/components/Layout.test.tsx` (2), `src/components/ScrollProgress.test.tsx` (2), `src/hooks/useScrollProgress.test.ts` (4), `src/pages/Ministries.test.tsx` (3), `src/pages/cta-bands.test.tsx` (4), `src/pages/worship-mass.test.tsx` (4), `src/pages/about-visuals.test.tsx` (3), `src/pages/event-chips.test.tsx` (3), `src/pages/NotFound.test.tsx` (2), `src/pages/History.test.tsx` (2), `src/components/Timeline.test.tsx` (3), `src/head.test.ts` (13), `src/security-headers.test.ts` (6) + `src/test/setup.ts` (Risen Christ fixtures: priests 3 + ppc 7 + 91 Toa Payoh Central + UEN 4042G + Easter). `vite.config.ts` `test.exclude` keeps `e2e/**` out; `e2e/*.spec.ts` 40 tests are Playwright only. `vite.config.ts` `test.exclude` keeps `e2e/**` out of unit runs; `e2e/*.spec.ts` is Playwright only.
 
 ### Design System
 
@@ -388,7 +388,7 @@ When adding vars, document them here and in `.env.example`, and guard with `impo
 
 You are done when:
 
-- `pnpm lint`, `pnpm typecheck`, and `pnpm build` are all green (tests excluded until ported — gate is `lint && typecheck && build`; after port `pnpm test` 25/141 + `pnpm test:e2e` 42 and full gate `lint && typecheck && test && test:e2e && build` must pass).
+- All five gates are green: `pnpm lint` + `pnpm typecheck` + `pnpm test` (25 files / 142) + `pnpm test:e2e` (40) + `pnpm build` — the full gate `lint && typecheck && test && test:e2e && build` must pass.
 - All 10 pages + 7 alias paths in 5 groups (`/worship`↔`/mass-times`↔`/hours-location`↔`/visit`; `/ministries`↔`/ministry`; `/news-events`↔`/news-and-events`; `/serve`↔`/volunteer`; `/give`↔`/donate`) + 9 hash anchors (`#mass`/`#confession`/`#visit` on `/worship` + `#liturgical`/`#faith-formation`/`#pastoral-care`/`#family-life`/`#youth`/`#language-communities` on `/ministries`; plus `/serve` has no anchors) navigate correctly, including direct hash URLs on static hosts (HashRouter, no 404.html needed, `Layout`'s double-hash `resolveAnchor` survives `/#/ministries#liturgical`).
 - Header is fixed, `useScrolled(16)` translucency works (transparent at top of Home → `maroon-950/92` blur on scroll; `solid = scrolled||!isHome||mobileOpen`), top bar (`lg`) shows `91 Toa Payoh Central · The Risen Christ — Easter Sunday` + `Give →/give`, mobile drawer closes on any in-drawer link via `onClickCapture` (+ `Escape`) and opens as a modal dialog with trapped focus (round-4 L-5: dialog/aria-modal/initial-focus/focus-restore/outside-tap), desktop Worship/Ministries dropdowns show children + `description` with `aria-current` parent/child states, hamburger `h-11 w-11` (44px), and keyboard + `SkipLink` (`#main-content`, hash-preserving, `tabindex="-1"`) covers all nav items. `ScrollProgress` decoupled rail at `z-[60]` tracks `useScrollProgress`.
 - Content renders from `src/data/*` without inline duplication: `content.ts` 8 interfaces (1969–2026 timeline 8, `grounds` 3 Main Church/Adoration Room/Parish Hall & Media Centre, `ministries` 6 with Language Communities jump nav, `faqs` 6, `upcomingEvents` 6 Parish/Devotion/Formation/Archdiocese with 2 hrefs, `givingOptions` 8, `priests` 3 with phone, `ppcMembers` 7, `serveRoles` 4 `summary`, `devotions` 6, `images` 11 all local) + `site.ts` hours 6 keys + mass 7 keys + address/CSP/phones/transport NS19+88/157/163/feast Easter/UEN T08CC4042G + nav `primaryNav` 6 / `footerNav` 10; new tokens live in `src/index.css` `@theme` (24 colors + 2 shadows).
@@ -428,13 +428,13 @@ You are done when:
 | 1 | Core Identity & Purpose (Risen Christ, 91 Toa Payoh Central 319193, blessed 1971 first air-con Olçomendy/Abrial, Grateful/Faithful/Sent, Easter) | Yes | ✅ |
 | 2 | Foundational Principles (Six-Phase) | Yes | ✅ |
 | 3 | Implementation Standards (General + TS Strict + Vite 7 + React 19 + Tailwind v4 CSS-first + Components incl. ScrollProgress decoupled + BackToTop ring + Accordion inert) | Yes | ✅ |
-| 4 | Development Workflow (Env Setup + Build Commands — tests stale) | Yes | ✅ |
-| 5 | Testing Strategy (tests not yet ported — historical St Mary 25/141 + 42 E2E, port checklist) | Yes | ✅ |
+| 4 | Development Workflow (Env Setup + Build Commands — five-command gate active) | Yes | ✅ |
+| 5 | Testing Strategy (wired — 25 files / 142 unit + 40 E2E green, ported 2026-08-31) | Yes | ✅ |
 | 6 | Code Quality Standards (Lint + Type Safety + Styling incl. Priest email+phone / serveRoles summary) | Yes | ✅ |
 | 7 | Git & Version Control (branching + Conventional Commits + CI Node 24/pnpm 11 + HashRouter deploy + src.orig St Mary archived) | Yes | ✅ |
 | 8 | Error Handling & Debugging (SafeImage fallback default / NotFound "does not lead to the church" / Layout ScrollProgress+keyed page-in) | Yes | ✅ |
 | 9 | Communication & Documentation (parish-specific why — Ho Ping/$450k/Velankanni/Simbang Gabi/CEP/F.R.E.E., lineage Rother→St Joseph BT→St Mary→Risen Christ) | Yes | ✅ |
-| 10 | Project-Specific Standards (Architecture 38-file tree + Data ownership 8 interfaces/11 images all local + Routing 17/7/9 + File Org) | Yes | ✅ |
+| 10 | Project-Specific Standards (Architecture 38 source + 25 test + 1 setup tree + Data ownership 8 interfaces/11 images all local + Routing 17/7/9 + File Org) | Yes | ✅ |
 | 11 | Success Metrics (10 pages + 7 aliases + 9 anchors + Risen Christ content from data/* + tokens 24+2 + Header solid logic + 3 socials + Free/SSVP/CEP) | — | ✅ |
 | 12 | System Integration (tools + skills vendored note) | — | ✅ |
 | 13 | Anti-Patterns to Avoid (12 incl. ScrollProgress decoupled + UEN 4042G + St Mary reintroduction) | — | ✅ |
