@@ -3,8 +3,8 @@ name: risen-christ
 display_name: Church of the Risen Christ — Toa Payoh
 version: 1.3.0
 last_updated: 2026-08-31
-project_state: "static SPA — 38 source / 0 tests (stale E2E 6) — port of www.risenchrist.org.sg, hop Rother→St Joseph→St Mary (src.orig)→Risen Christ (src)"
-verified: pnpm lint 0 + pnpm typecheck 0 + pnpm build → dist/index.html + dist/_headers + dist/images/8 (tests not yet ported)
+project_state: "static SPA — 25 files / 142 tests + 40 E2E green — port of www.risenchrist.org.sg, hop Rother→St Joseph→St Mary (src.orig)→Risen Christ (src)"
+verified: pnpm lint 0 + pnpm typecheck 0 + pnpm test 25/142 + pnpm test:e2e 40 + pnpm build 388.44kB → dist/index.html + dist/_headers + dist/images/8
 stack: react 19.2.8 / vite 7.3.6 / tailwind 4.3.3 (@tailwindcss/vite 4.1.17) / typescript 5.9.3 / react-router 7.18.2 / singlefile 2.3.3 / eslint 9.39.5 flat / vitest 3.2.6 jsdom / testing-library 16.2.0 / playwright 1.55.1 chromium (42 E2E green)
 rendering: static SPA (HashRouter, no SSR)
 data_layer: file-backed typed arrays in src/data/* + const site object

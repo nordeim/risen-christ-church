@@ -41,7 +41,7 @@ Every row below is implemented — no placeholders. Pages are named exports from
 | Utils | clsx + tailwind-merge | `2.1.1` / `3.6.0` | `cn()` class merging — always merge via `cn()` |
 | Bundling | vite-plugin-singlefile | `2.3.3` | Inlines JS+CSS into `dist/index.html` (`public/images/` copied to `dist/images/`) |
 | Testing | Vitest + Testing Library + jsdom | `3.2.6` / `16.2.0` / `26.1.0` | `vitest run` — **25 files / 142 tests** (`cn` 5 + `nav` 7 + `content` 10 + `site` 8 + `massDay` 5 + `monogram` 7 + `Button` 11 + `SkipLink` 3 + `Accordion` 6 + `SafeImage` 6 + `Header` 16 + `BackToTop` 7 + `Ministries` 3 + `cta-bands` 4 + `worship-mass` 4 + `about-visuals` 3 + `event-chips` 3 + `Timeline` 3 + `NotFound` 2 + `History` 2 + `Layout` 2 + `useScrollProgress` 4 + `ScrollProgress` 2 + `head` 13 + `security-headers` 6) via `src/test/setup.ts` |
-| E2E | Playwright | `1.55.1` | `chromium`, `webServer` → `pnpm exec vite --port 5173 --host 127.0.0.1 --strictPort`, `e2e/` — **6 specs — 40 tests** (smoke 11 + navigation 8 + ministries 4 + give-faq 4 + enhancements 9 + enhancements-round5 4) — Risen Christ |
+| E2E | Playwright | `1.55.1` | `chromium`, `webServer` → `pnpm exec vite --port 5173 --host 127.0.0.1 --strictPort`, `e2e/` — **6 specs — 40 tests** (smoke 11 + navigation 8 + ministries 4 + give-faq 4 + enhancements 7 + enhancements-round5 6) — Risen Christ (91 Toa Payoh Central, He is risen) |
 | Linting | ESLint flat + typescript-eslint + react-hooks | `9.39.5` / `8.28.0` / `5.2.0` | `eslint . --max-warnings 0`, `eslint.config.js` (ignores `dist`, `skills`, `src.orig`) |
 | Fonts | Google Fonts | — | `Fraunces` (display) + `Source Sans 3` (body) via `index.html` |
 
@@ -131,7 +131,7 @@ flowchart TB
 │   │   ├── 📄 cn.ts         # twMerge(clsx) — always merge via cn()
 │   │   └── 📄 massDay.ts    # massDayKey(date) — single source for the Worship today-highlight
 │   └── 📂 **/*.test.{ts,tsx} # (0 files — not yet ported) historical St Mary suite 25/141 retained in src.orig
-├── 📂 e2e/                  # 6 specs — stale (still asserts St Mary copy; must be ported for Risen Christ)
+├── 📂 e2e/                  # 6 specs — 40 tests: smoke.spec.ts (11) + navigation.spec.ts (8) + ministries.spec.ts (4) + give-faq.spec.ts (4) + enhancements.spec.ts (7) + enhancements-round5.spec.ts (6) — Risen Christ (91 Toa Payoh Central)
 │   ├── 📄 smoke.spec.ts     # hero + rise-in entrance + Worship/Ministries aliases + hash anchors + NotFound + mobile drawer + event chips + back-to-top — STALE
 │   ├── 📄 navigation.spec.ts# desktop Worship/Ministries dropdown + keyboard + SkipLink + footer 10 links + Give + aria-current — STALE
 │   ├── 📄 ministries.spec.ts# 6 sections + jump nav + imageAlt — STALE
@@ -151,7 +151,7 @@ flowchart TB
 └── 📄 AGENTS.md             # Compact agent cheat sheet
 ```
 
-Current audits — port + 2026-08-28 review + 2026-08-30 `src` vs `src.orig` validation (historical — St Mary) + **Risen Christ port 2026-08-31** (docs adaptation, `lint 0 + typecheck 0 + build` green; tests not yet ported): 17 route entries / 16 content paths / 5 alias groups (7 paths) / 10 pages; tests stale (0 files in `src/`; `src.orig` 25/141 + 42 E2E retained as historical reference); singlefile `dist/index.html` + `dist/_headers` + `dist/images/8` (pinned exact, pnpm 11).
+Current audits — port + 2026-08-28 review + 2026-08-30 `src` vs `src.orig` validation (historical — St Mary) + **2026-08-31 Risen Christ port: lint 0 + typecheck 0 + 25/142 + 40 E2E + 388.44kB green** — 17 route entries / 16 content paths / 5 alias groups (7 paths) / 10 pages; 25 files / 142 tests + 40 E2E green via `src/test/setup.ts` + `e2e/`; singlefile `dist/index.html 388.44kB` + `dist/_headers` + `dist/images/8` (pinned exact, pnpm 11).
 
 ## Quick Start
 
@@ -270,7 +270,7 @@ This repo follows the six-phase workflow in `CLAUDE.md` (ANALYZE → PLAN → VA
 | `tsc --noEmit` fails on unused var | `noUnusedLocals/Params` is `true` — remove or prefix with `_` only if intentionally unused. |
 | External image not loading | `SafeImage` falls back to `fallback` (default `/images/hero-church.jpg`) via `dataset.fallback` guard; current `images.*` are all local. |
 | `pnpm test` finds 0 tests | Expected — `src/` has 0 `*.test.*` files (St Mary suite retained in `src.orig/`); restore `src/test/setup.ts` + port tests with Risen Christ fixtures before gating. |
-| `pnpm test:e2e` fails | Specs are stale (still assert `5 Bukit Batok East Ave 2` / `Portiuncula` / `WOHA`). Run `pnpm test:e2e:ui` to inspect after porting for `91 Toa Payoh Central` / `Velankanni` / `He is risen`. |
+| `pnpm test:e2e` | 40 passed (smoke 11 + navigation 8 + ministries 4 + give-faq 4 + enhancements 7 + enhancements-round5 6) — run `pnpm test:e2e:ui` to inspect |
 
 ## License
 
