@@ -9,6 +9,9 @@ import { resolve } from "node:path";
  * during the round-6 audit; update it together with the docs when counts or
  * anchors legitimately change. Round-7 audit remediation (2026-08-31) added
  * CLAUDE.md coverage after its five-gate claim drifted to "test:e2e (40)".
+ * Round-9 (2026-08-31) added built-artifact E2E pins after the first-ever
+ * built-artifact run exposed the dev-only favicon assertion (E2E-L1); the
+ * unit budget was re-pinned 32/179 → 32/181 (docs-contract 10 → 12).
  */
 const root = resolve(__dirname, "..");
 
@@ -40,6 +43,10 @@ describe("risen-christ_SKILL.md contract", () => {
     expect(skillContract).not.toContain("25/142");
   });
 
+  it("pins the built-artifact E2E config (round-9 E2E-L1)", () => {
+    expect(skillContract).toContain("playwright.built.config.ts");
+  });
+
   it("carries no St Mary parish identity as current facts", () => {
     const stale = [
       "5 Bukit Batok East Ave 2",
@@ -56,7 +63,7 @@ describe("risen-christ_SKILL.md contract", () => {
   });
 
   it("Quick Reference Card carries the ported test state and Risen Christ facts", () => {
-    expect(skillQuickRef).toContain("32/179 + 48 E2E");
+    expect(skillQuickRef).toContain("32/181 + 48 E2E");
     expect(skillQuickRef).not.toContain("24/134");
     expect(skillQuickRef).not.toContain("42 E2E");
     expect(skillQuickRef).not.toContain("25/142");
@@ -83,8 +90,8 @@ describe("AGENTS.md contract", () => {
     expect(agents).toContain("48 tests");
   });
 
-  it("states the verified 32 files / 179 unit budget", () => {
-    expect(agents).toContain("32 files / 179 tests");
+  it("states the verified 32 files / 181 unit budget", () => {
+    expect(agents).toContain("32 files / 181 tests");
   });
 });
 
@@ -94,7 +101,11 @@ describe("CLAUDE.md contract", () => {
     expect(claude).not.toMatch(/test:e2e` \(40\)/);
   });
 
-  it("states the verified 32 files / 179 unit budget", () => {
-    expect(claude).toContain("32 files / 179");
+  it("states the verified 32 files / 181 unit budget", () => {
+    expect(claude).toContain("32 files / 181");
+  });
+
+  it("pins the built-artifact E2E config (round-9 E2E-L1)", () => {
+    expect(claude).toContain("playwright.built.config.ts");
   });
 });
