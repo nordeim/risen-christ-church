@@ -17,6 +17,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { givingOptions, images } from "@/data/content";
 import { site } from "@/data/site";
+import { cn } from "@/utils/cn";
 
 const icons: Record<(typeof givingOptions)[number]["icon"], LucideIcon> = {
   flame: Flame,
@@ -50,9 +51,17 @@ export function Give() {
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {givingOptions.map((option, index) => {
               const Icon = icons[option.icon];
+              const featured = index === 0;
               return (
-                <Reveal key={option.name} delay={index * 50}>
-                  <article className="card-lift h-full rounded-sm border border-shrine-stone bg-shrine-parchment p-6">
+                <Reveal key={option.name} delay={index * 50} className="h-full">
+                  <article
+                    data-featured={featured ? "true" : undefined}
+                    className={cn(
+                      "card-tint h-full rounded-sm border border-shrine-stone bg-shrine-parchment p-6",
+                      featured &&
+                        "border-t-2 border-t-shrine-gold-500 bg-shrine-gold-100/40",
+                    )}
+                  >
                     <Icon className="h-5 w-5 text-shrine-gold-600" aria-hidden="true" />
                     <h3 className="mt-4 font-display text-xl">{option.name}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-shrine-charcoal/80">

@@ -176,4 +176,16 @@ describe("Header", () => {
     expect(screen.queryByRole("dialog", { name: "Site menu" })).not.toBeInTheDocument();
     expect(document.activeElement).toBe(toggle);
   });
+
+  it("active desktop nav item carries the permanent gold hairline (round 7)", () => {
+    renderHeader("/worship");
+    const tokens = (el: HTMLElement) => el.className.split(/\s+/);
+    const worshipTrigger = screen.getByRole("button", { name: /Worship/i });
+    expect(tokens(worshipTrigger)).toContain("after:scale-x-100");
+    const aboutTrigger = screen.getByRole("button", { name: /About/i });
+    expect(tokens(aboutTrigger)).not.toContain("after:scale-x-100");
+    const homeLink = screen.getByRole("link", { name: "Home" });
+    expect(tokens(homeLink)).not.toContain("after:scale-x-100");
+    expect(tokens(homeLink)).toContain("hover:after:scale-x-100");
+  });
 });

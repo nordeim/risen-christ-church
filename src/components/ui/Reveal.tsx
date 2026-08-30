@@ -19,17 +19,25 @@ export function Reveal({ children, delay = 0, as: Tag = "div", className }: Reve
       el.classList.add("reveal-visible");
       return;
     }
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.classList.add("reveal-visible");
-          io.disconnect();
-        }
-      },
-      { threshold: 0.15 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
+    let io: IntersectionObserver | null = null;
+    try {
+      io = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            el.classList.add("reveal-visible");
+            io?.disconnect();
+          }
+        },
+        // Start revealing just before the entry crosses the bottom edge so
+        // fast scrolls never glimpse an un-revealed card (round 7).
+        { threshold: 0.15, rootMargin: "0px 0px 8% 0px" },
+      );
+      io.observe(el);
+    } catch {
+      // Environments without IntersectionObserver still get the content.
+      el.classList.add("reveal-visible");
+    }
+    return () => io?.disconnect();
   }, []);
 
   return (

@@ -4,6 +4,8 @@ import { MemoryRouter } from "react-router-dom";
 import { Home } from "@/pages/Home";
 import { Serve } from "@/pages/Serve";
 import { Give } from "@/pages/Give";
+import { NewsEvents } from "@/pages/NewsEvents";
+import { FAQ } from "@/pages/FAQ";
 import { site } from "@/data/site";
 
 function renderWithRouter(ui: React.ReactElement) {
@@ -47,5 +49,32 @@ describe("CTA band headings carry correct explicit color", () => {
     expect(h2.className).toContain("text-shrine-cream");
     // The band surfaces canonical site.ts facts
     expect(screen.getByText(new RegExp(site.contact.officePhone.replace("+", "\\+")))).toBeInTheDocument();
+  });
+
+  it("News & Events closing band h2 on maroon-950 is cream (round 7)", () => {
+    renderWithRouter(<NewsEvents />);
+    const h2 = screen.getByRole("heading", {
+      level: 2,
+      name: /The bulletin keeps the household in one conversation/i,
+    });
+    expect(h2.className).toContain("text-shrine-cream");
+    // The band carries the canonical bulletin link.
+    const bulletin = screen.getByRole("link", { name: /Read this week's bulletin/i });
+    expect(bulletin.getAttribute("href")).toBe(site.bulletin);
+  });
+
+  it("FAQ closing band loops back to the office (round 7)", () => {
+    renderWithRouter(<FAQ />);
+    const h2 = screen.getByRole("heading", {
+      level: 2,
+      name: /Still have questions/i,
+    });
+    expect(h2.className).toContain("text-shrine-maroon-700");
+    expect(
+      screen.getByRole("link", { name: new RegExp(site.contact.officePhone.replace("+", "\\+")) }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: new RegExp(site.contact.email.replace(".", "\\.")) }),
+    ).toBeInTheDocument();
   });
 });

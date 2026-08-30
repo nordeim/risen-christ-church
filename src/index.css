@@ -202,6 +202,15 @@
     will-change: opacity, transform;
   }
 
+  /* Reveal resilience (round 7): content must never be lost to the page —
+     print and other non-interactive media always get the full content. */
+  @media print {
+    .reveal {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+
   .reveal-visible {
     opacity: 1;
     transform: translateY(0);
@@ -334,6 +343,19 @@
     transform: translateY(-4px);
     box-shadow: var(--shadow-shrine);
     border-color: var(--color-shrine-gold-300);
+  }
+
+  /* Info-card affordance (round 7): non-interactive cards warm-tint on hover
+     instead of lifting — lift is reserved for cards that go somewhere. */
+  .card-tint {
+    transition-property: background-color, border-color;
+    transition-duration: 300ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .card-tint:hover {
+    background-color: rgba(226, 191, 114, 0.08);
+    border-color: rgba(209, 169, 85, 0.55);
   }
 
   .img-zoom {

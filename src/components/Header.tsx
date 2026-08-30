@@ -142,8 +142,8 @@ export function Header() {
                     aria-expanded={openDesktopMenu === item.label}
                     aria-current={isParentCurrent ? "true" : undefined}
                     className={cn(
-                      "inline-flex items-center gap-1 px-3 py-2 text-sm tracking-wide text-shrine-cream/85 transition-colors hover:text-shrine-gold-300",
-                      isParentCurrent && "text-shrine-gold-300",
+                      "relative inline-flex items-center gap-1 px-3 py-2 text-sm tracking-wide text-shrine-cream/85 transition-colors after:absolute after:inset-x-3 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-shrine-gold-300 after:transition-transform after:duration-300 hover:after:scale-x-100 focus-visible:after:scale-x-100 hover:text-shrine-gold-300",
+                      isParentCurrent && "text-shrine-gold-300 after:scale-x-100",
                     )}
                   >
                     {item.label}
@@ -154,8 +154,8 @@ export function Header() {
                     to={item.to}
                     aria-current={pathname === item.to ? "page" : undefined}
                     className={cn(
-                      "inline-flex px-3 py-2 text-sm tracking-wide text-shrine-cream/85 transition-colors hover:text-shrine-gold-300",
-                      pathname === item.to && "text-shrine-gold-300",
+                      "relative inline-flex px-3 py-2 text-sm tracking-wide text-shrine-cream/85 transition-colors after:absolute after:inset-x-3 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-shrine-gold-300 after:transition-transform after:duration-300 hover:after:scale-x-100 focus-visible:after:scale-x-100 hover:text-shrine-gold-300",
+                      pathname === item.to && "text-shrine-gold-300 after:scale-x-100",
                     )}
                   >
                     {item.label}

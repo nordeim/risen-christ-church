@@ -61,4 +61,17 @@ describe("Worship mass-times today highlight", () => {
       expect(li.querySelector("span.bg-shrine-gold-500")).not.toBeNull();
     });
   });
+
+  it("confession copy column stays anchored beside the devotion cards (round 7)", () => {
+    renderWorship();
+    // The Reconciliation heading's column is the sticky story of the section.
+    const heading = screen.getByRole("heading", {
+      level: 3,
+      name: /Sacrament of Reconciliation/i,
+    });
+    const column = heading.closest("div.lg\\:sticky") ?? heading.parentElement;
+    expect(column?.className).toContain("lg:sticky");
+    expect(column?.className).toContain("lg:top-28");
+    expect(column?.className).toContain("lg:self-start");
+  });
 });

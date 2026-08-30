@@ -34,12 +34,12 @@ export function PageHero({
           src={image}
           fallback={fallback ?? image}
           alt=""
-          className="h-full w-full object-cover opacity-35"
+          className="h-full w-full object-cover opacity-45"
           loading="eager"
           fetchPriority="high"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-shrine-maroon-950/50 via-shrine-maroon-950/70 to-shrine-maroon-950" />
-        <div className="absolute inset-0 bg-gradient-to-r from-shrine-maroon-950/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-shrine-maroon-950/50 via-shrine-maroon-950/65 to-shrine-maroon-950" />
+        <div className="absolute inset-0 bg-gradient-to-r from-shrine-maroon-950/45 to-transparent" />
         <div className="bg-grain pointer-events-none absolute inset-0" />
       </div>
       <Container className="relative">

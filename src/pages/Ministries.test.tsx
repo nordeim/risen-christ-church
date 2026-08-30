@@ -27,11 +27,15 @@ describe("Ministries jump nav", () => {
     expect(formation).not.toHaveAttribute("aria-current");
   });
 
-  it("pills have no aria-current when no hash is set", () => {
+  it("scrollspy marks exactly one pill when no hash is set (round 7)", () => {
+    // jsdom's IO mock reports every observed section intersecting, so the
+    // spy legitimately tracks a reading position even without a hash —
+    // exactly one pill must be current (round-7 scrollspy contract).
     renderMinistries();
     const nav = screen.getByRole("navigation", { name: /Jump to ministry/i });
-    for (const pill of Array.from(nav.querySelectorAll("a"))) {
-      expect(pill).not.toHaveAttribute("aria-current");
-    }
+    const current = Array.from(nav.querySelectorAll("a")).filter(
+      (pill) => pill.getAttribute("aria-current") === "true",
+    );
+    expect(current).toHaveLength(1);
   });
 });

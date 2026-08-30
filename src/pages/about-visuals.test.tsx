@@ -45,4 +45,14 @@ describe("About visual identity", () => {
     expect(screen.getByText("Secretariat")).toBeInTheDocument();
     expect(screen.getByText("Peter Quek")).toBeInTheDocument();
   });
+
+  it("PPC roster rows carry the hover-tint affordance (round 7)", () => {
+    renderAbout();
+    const rows = document.querySelectorAll("ul.divide-y li");
+    expect(rows.length).toBeGreaterThan(0);
+    rows.forEach((row) => {
+      expect(row.className).toContain("hover:bg-shrine-maroon-50/60");
+      expect(row.className).toContain("transition-colors");
+    });
+  });
 });

@@ -3,11 +3,16 @@ import { PageHero } from "@/components/PageHero";
 import { SafeImage } from "@/components/SafeImage";
 import { Container } from "@/components/ui/Container";
 import { images, ministries } from "@/data/content";
+import { useScrollSpy } from "@/hooks/useScrollSpy";
 import { cn } from "@/utils/cn";
 
 export function Ministries() {
   const { hash } = useLocation();
   const current = hash.replace(/^#/, "");
+  // Scrollspy tracks reading position; the clicked hash wins until the
+  // sections cross the viewport's middle band again (round 7).
+  const spyId = useScrollSpy(ministries.map((ministry) => ministry.id));
+  const activeId = current || spyId;
 
   return (
     <>
@@ -28,10 +33,10 @@ export function Ministries() {
             <Link
               key={ministry.id}
               to={`/ministries#${ministry.id}`}
-              aria-current={current === ministry.id ? "true" : undefined}
+              aria-current={activeId === ministry.id ? "true" : undefined}
               className={cn(
                 "shrink-0 rounded-full border px-4 py-1.5 text-sm transition-colors",
-                current === ministry.id
+                activeId === ministry.id
                   ? "border-shrine-gold-500 bg-shrine-gold-100 text-shrine-maroon-800"
                   : "border-shrine-stone text-shrine-charcoal/80 hover:border-shrine-gold-400",
               )}

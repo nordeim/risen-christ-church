@@ -43,7 +43,7 @@ export function About() {
           <div className="mt-14 grid gap-8 md:grid-cols-3">
             {pillars.map((pillar, index) => (
               <Reveal key={pillar.title} delay={index * 80}>
-                <article className="card-lift relative overflow-hidden rounded-sm border border-shrine-stone bg-shrine-parchment p-8">
+                <article className="card-tint relative overflow-hidden rounded-sm border border-shrine-stone bg-shrine-parchment p-8">
                   <span
                     className="font-display text-5xl text-shrine-maroon-700/15"
                     aria-hidden="true"
@@ -76,7 +76,7 @@ export function About() {
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {priests.map((priest, index) => (
               <Reveal key={priest.name} delay={index * 70}>
-                <article className="card-lift rounded-sm border border-shrine-stone bg-shrine-cream p-6">
+                <article className="card-tint rounded-sm border border-shrine-stone bg-shrine-cream p-6">
                   <div
                     className="flex h-14 w-14 items-center justify-center rounded-full border border-shrine-gold-400/50 bg-shrine-parchment font-display text-lg text-shrine-maroon-700"
                     aria-hidden="true"
@@ -88,7 +88,7 @@ export function About() {
                   {priest.email ? (
                     <a
                       href={`mailto:${priest.email}`}
-                      className="mt-3 block text-sm text-shrine-charcoal/80 hover:text-shrine-maroon-600"
+                      className="link-underline mt-3 block w-fit text-sm text-shrine-charcoal/80 hover:text-shrine-maroon-600"
                     >
                       {priest.email}
                     </a>
@@ -96,7 +96,7 @@ export function About() {
                   {priest.phone ? (
                     <a
                       href={`tel:+${priest.phone.replace(/\D/g, "")}`}
-                      className="mt-1 block text-sm text-shrine-charcoal/80 hover:text-shrine-maroon-600"
+                      className="link-underline mt-1 block w-fit text-sm text-shrine-charcoal/80 hover:text-shrine-maroon-600"
                     >
                       {priest.phone}
                     </a>
@@ -118,7 +118,10 @@ export function About() {
             />
             <ul className="mt-8 divide-y divide-shrine-stone border-y border-shrine-stone">
               {ppcMembers.map((member) => (
-                <li key={`${member.role}-${member.name}`} className="flex justify-between gap-4 py-3">
+                <li
+                  key={`${member.role}-${member.name}`}
+                  className="-mx-2 flex justify-between gap-4 rounded-sm px-2 py-3 transition-colors hover:bg-shrine-maroon-50/60"
+                >
                   <span className="text-sm text-shrine-charcoal/75">{member.role}</span>
                   <span className="text-right font-display text-shrine-maroon-700">
                     {member.name}
