@@ -22,10 +22,14 @@ test.describe("Round-2 enhancement audit", () => {
 
   test("head ships favicon, theme-color, social images, and Church JSON-LD", async ({ page }) => {
     await gotoHash(page, "/");
-    await expect(page.locator('link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute(
-      "href",
-      "/favicon.svg",
-    );
+    // Env-agnostic contract (round-9 E2E-L1): dev serves the icon href as
+    // "/favicon.svg", while the singlefile build rewrites it to the relative
+    // form "./favicon.svg". Accept both — and assert the reference actually
+    // resolves, mirroring the env-safe "favicon.svg resolves from public/" test.
+    const icon = page.locator('link[rel="icon"][type="image/svg+xml"]');
+    await expect(icon).toHaveAttribute("href", /^(?:\.\/|\/)favicon\.svg$/);
+    const iconResponse = await page.request.get((await icon.getAttribute("href"))!);
+    expect(iconResponse.status()).toBe(200);
     await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute(
       "content",
       "#200a0a",
