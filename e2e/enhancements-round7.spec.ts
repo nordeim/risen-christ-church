@@ -67,7 +67,8 @@ test.describe("Round-7 enhancement audit", () => {
     await expect(pills.locator("a")).toHaveCount(6);
 
     await page.locator("#faith-formation").scrollIntoViewIfNeeded();
-    await page.waitForTimeout(400);
+    // No hard sleep — toHaveText auto-polls until the spy's IO callback moves
+    // aria-current (round-7 audit L-1).
     const current = pills.locator('a[aria-current="true"]');
     await expect(current).toHaveCount(1);
     await expect(current).toHaveText(/Faith Formation/i);

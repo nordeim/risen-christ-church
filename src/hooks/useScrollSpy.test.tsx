@@ -91,6 +91,37 @@ describe("useScrollSpy", () => {
     expect(screen.getByTestId("spy-active").textContent).toBe("gamma");
   });
 
+  it("resolves batched ties by document order, not delivery order", () => {
+    // A fast programmatic scroll can push several sections through the thin
+    // middle band inside ONE IntersectionObserver callback, and IO may deliver
+    // those entries in any order. The reading-position semantic is "deepest
+    // section in document order wins": gamma (ids[2]) must become active even
+    // though its entry arrived first in the batch (round-7 audit L-2).
+    render(<SpyProbe ids={["alpha", "beta", "gamma"]} />);
+    act(() => {
+      instances[0].fire([
+        { target: section("gamma"), isIntersecting: true },
+        { target: section("alpha"), isIntersecting: true },
+      ]);
+    });
+    expect(screen.getByTestId("spy-active").textContent).toBe("gamma");
+  });
+
+  it("keeps the last active section when a batch leaves the band empty", () => {
+    // Scrolling into a header/footer gap: nothing intersects the band any
+    // more, and the pill must hold its position instead of flickering back
+    // to the first id (round-7 remediation regression lock).
+    render(<SpyProbe ids={["alpha", "beta", "gamma"]} />);
+    act(() => {
+      instances[0].fire([{ target: section("beta"), isIntersecting: true }]);
+    });
+    expect(screen.getByTestId("spy-active").textContent).toBe("beta");
+    act(() => {
+      instances[0].fire([{ target: section("beta"), isIntersecting: false }]);
+    });
+    expect(screen.getByTestId("spy-active").textContent).toBe("beta");
+  });
+
   it("disconnects the observer on unmount", () => {
     const { unmount } = render(<SpyProbe ids={["alpha", "beta"]} />);
     expect(instances).toHaveLength(1);
