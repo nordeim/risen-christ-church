@@ -75,3 +75,23 @@ describe("Worship mass-times today highlight", () => {
     expect(column?.className).toContain("lg:self-start");
   });
 });
+
+describe("Worship mass-card footnote contrast (round-12, audit F-2)", () => {
+  it("renders every mass-card footnote at charcoal/85 (>= 4.5:1 on the parchment card)", () => {
+    renderWorship();
+    const cards = document.querySelectorAll<HTMLElement>('[data-testid="mass-card"]');
+    expect(cards.length).toBeGreaterThanOrEqual(3);
+    let footnotes = 0;
+    cards.forEach((card) => {
+      card.querySelectorAll("p").forEach((p) => {
+        if (p.className.includes("text-shrine-charcoal/")) {
+          footnotes += 1;
+          expect(p.className).toContain("text-shrine-charcoal/85");
+          // The failing step this contract replaces (4.16:1 on parchment).
+          expect(p.className).not.toContain("text-shrine-charcoal/70");
+        }
+      });
+    });
+    expect(footnotes).toBeGreaterThanOrEqual(3);
+  });
+});

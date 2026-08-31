@@ -51,7 +51,9 @@ function MassCard({ dayKey, title, footnote, children, delay = 0 }: MassCardProp
         </div>
         <h3 className="mt-4 font-display text-2xl">{title}</h3>
         {children}
-        <p className="mt-4 text-xs text-shrine-charcoal/70">{footnote}</p>
+        {/* Round-12 (audit F-2 pattern sweep): charcoal/70 blends to 4.16:1 on
+            the parchment card — below AA at text-xs. /85 blends to 6.19:1. */}
+        <p className="mt-4 text-xs text-shrine-charcoal/85">{footnote}</p>
       </article>
     </Reveal>
   );

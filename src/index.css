@@ -29,6 +29,11 @@
 
   --color-shrine-terracotta-400: #c17a53;
   --color-shrine-terracotta-500: #ab5f3c;
+  /* Round-12 (audit F-1): text-bearing step. terracotta-500 computes 3.92:1
+     on parchment #f2e9d6 — below WCAG 2.2 AA 1.4.3 for the 0.65rem chip
+     label; terracotta-600 computes 5.36:1. Contract:
+     src/components/wcag-contrast.test.tsx. */
+  --color-shrine-terracotta-600: #8f4c30;
 
   --shadow-shrine: 0 20px 60px -20px rgba(51, 16, 15, 0.45);
   --shadow-shrine-lg: 0 40px 90px -30px rgba(51, 16, 15, 0.55);
