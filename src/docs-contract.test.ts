@@ -16,6 +16,10 @@ import { resolve } from "node:path";
  * round-11 live-pass ledger rows after the fresh E2E pass vs `66d2398`
  * exposed the eval backslash-mangling lesson (E2E-J1); the unit budget was
  * re-pinned 32/181 → 32/184 (docs-contract 12 → 15).
+ * Round-12 (2026-08-31) closed the comparative UI/UX audit findings for
+ * Risen Christ (F-1/F-2/F-3/F-4/F-9) and re-pinned the budgets in lockstep
+ * with the four docs: 32/184 + 48 E2E → 35/202 + 51 E2E (docs-contract
+ * 15 → 16 pins), plus the round-12 ledger anchor pin.
  */
 const root = resolve(__dirname, "..");
 
@@ -39,8 +43,9 @@ describe("risen-christ_SKILL.md contract", () => {
     expect(skillContract).not.toMatch(/#mandarin\b/);
   });
 
-  it("advertises the verified 48-test E2E budget (not 42)", () => {
-    expect(skillContract).toContain("48 E2E");
+  it("advertises the verified 51-test E2E budget (not 48)", () => {
+    expect(skillContract).toContain("51 E2E");
+    expect(skillContract).not.toMatch(/48 E2E/);
     expect(skillContract).not.toMatch(/42 E2E/);
     expect(skillContract).not.toContain("24/134");
     expect(skillContract).not.toContain("25/141");
@@ -73,11 +78,12 @@ describe("risen-christ_SKILL.md contract", () => {
   });
 
   it("Quick Reference Card carries the ported test state and Risen Christ facts", () => {
-    expect(skillQuickRef).toContain("32/184 + 48 E2E");
+    expect(skillQuickRef).toContain("35/202 + 51 E2E");
     expect(skillQuickRef).not.toContain("24/134");
     expect(skillQuickRef).not.toContain("42 E2E");
     expect(skillQuickRef).not.toContain("25/142");
     expect(skillQuickRef).not.toContain("32/175");
+    expect(skillQuickRef).not.toContain("32/184 + 48 E2E");
     expect(skillQuickRef).not.toContain("T08CC4053H");
     expect(skillQuickRef).toContain("1969–2026 Toa Payoh");
   });
@@ -97,15 +103,25 @@ describe("README.md contract", () => {
   it("references the round-11 live-pass ledger (E2E-J1 + tri-env verification)", () => {
     expect(readme).toContain("e2e-live-pass-round11-2026-08-31.md");
   });
+
+  it("references the round-12 comparative-audit remediation ledger", () => {
+    expect(readme).toContain("remediation-plan-round12-2026-08-31.md");
+    expect(readme).toContain("remediation-round12-2026-08-31.md");
+    expect(agents).toContain("remediation-round12-2026-08-31.md");
+    // The F-9 state is pinned: src.orig was tracked until round-12, then pruned.
+    expect(claude).toContain("pruned round-12");
+  });
 });
 
 describe("AGENTS.md contract", () => {
-  it("states the verified 48-test E2E budget", () => {
-    expect(agents).toContain("48 tests");
+  it("states the verified 51-test E2E budget", () => {
+    expect(agents).toContain("51 tests");
+    expect(agents).not.toContain("48 tests");
   });
 
-  it("states the verified 32 files / 184 unit budget", () => {
-    expect(agents).toContain("32 files / 184 tests");
+  it("states the verified 35 files / 202 unit budget", () => {
+    expect(agents).toContain("35 files / 202 tests");
+    expect(agents).not.toContain("32 files / 184 tests");
   });
 
   it("references the round-11 live-pass ledger (E2E-J1 + tri-env verification)", () => {
@@ -114,13 +130,15 @@ describe("AGENTS.md contract", () => {
 });
 
 describe("CLAUDE.md contract", () => {
-  it("states the five-command gate with the verified 48-test E2E budget (round-7 audit M-2)", () => {
-    expect(claude).toContain("(48)");
+  it("states the five-command gate with the verified 51-test E2E budget (round-7 audit M-2)", () => {
+    expect(claude).toContain("(51)");
+    expect(claude).not.toMatch(/\(48\)/);
     expect(claude).not.toMatch(/test:e2e` \(40\)/);
   });
 
-  it("states the verified 32 files / 184 unit budget", () => {
-    expect(claude).toContain("32 files / 184");
+  it("states the verified 35 files / 202 unit budget", () => {
+    expect(claude).toContain("35 files / 202");
+    expect(claude).not.toContain("32 files / 184");
   });
 
   it("pins the built-artifact E2E config (round-9 E2E-L1)", () => {
