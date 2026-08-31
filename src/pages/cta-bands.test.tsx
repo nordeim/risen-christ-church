@@ -33,9 +33,12 @@ describe("CTA band headings carry correct explicit color", () => {
 
   it("Give heading on cream is maroon (not invisible)", () => {
     renderWithRouter(<Give />);
+    // Round-12 (audit F-4): the section title is human-language now; the UEN
+    // moved into a copyable detail row inside the PayNow card. The heading's
+    // explicit-color contract is unchanged.
     const giveH2 = screen.getByRole("heading", {
       level: 2,
-      name: new RegExp(site.uen),
+      name: /Ways to give/i,
     });
     expect(giveH2.className).toContain("text-shrine-maroon-700");
   });

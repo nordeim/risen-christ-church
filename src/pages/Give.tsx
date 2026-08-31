@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   BookOpen,
   Building2,
@@ -30,6 +31,48 @@ const icons: Record<(typeof givingOptions)[number]["icon"], LucideIcon> = {
   globe: Globe,
 };
 
+/**
+ * Round-12 (audit F-4): the UEN is a compliance string that used to perform as
+ * the section's display heading. It lives here — inside the PayNow card, where
+ * it is functionally needed — as a copyable detail row. Clipboard-first with a
+ * legacy fallback; an honest no-op on failure (the label stays "Copy").
+ */
+function CopyUenButton({ value }: { value: string }) {
+  const [copied, setCopied] = useState(false);
+
+  async function copy() {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(value);
+        setCopied(true);
+        return;
+      }
+      const area = document.createElement("textarea");
+      area.value = value;
+      area.setAttribute("readonly", "");
+      area.style.position = "fixed";
+      area.style.opacity = "0";
+      document.body.appendChild(area);
+      area.select();
+      setCopied(document.execCommand("copy"));
+      document.body.removeChild(area);
+    } catch {
+      // Leave the label as "Copy" so the failure is visible, not faked.
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={copy}
+      aria-label={copied ? "Copied" : `Copy UEN ${value}`}
+      className="shrink-0 rounded-sm border border-shrine-gold-500/60 px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-shrine-maroon-700 transition-colors hover:bg-shrine-maroon-50/60 focus-visible:bg-shrine-maroon-50/60"
+    >
+      {copied ? "Copied" : "Copy"}
+    </button>
+  );
+}
+
 export function Give() {
   return (
     <>
@@ -45,7 +88,7 @@ export function Give() {
         <Container>
           <SectionHeading
             eyebrow="How to give"
-            title={`UEN ${site.uen}`}
+            title="Ways to give"
             description={`Cheque payable to ${site.chequePayee}. The parish office receives offerings during reception hours.`}
           />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -67,6 +110,14 @@ export function Give() {
                     <p className="mt-2 text-sm leading-relaxed text-shrine-charcoal/80">
                       {option.description}
                     </p>
+                    {featured ? (
+                      <div className="mt-4 flex items-center justify-between gap-3 rounded-sm border border-shrine-stone bg-shrine-cream px-3 py-2">
+                        <span className="font-display text-sm text-shrine-maroon-700">
+                          {site.uen}
+                        </span>
+                        <CopyUenButton value={site.uen} />
+                      </div>
+                    ) : null}
                   </article>
                 </Reveal>
               );

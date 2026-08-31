@@ -375,7 +375,9 @@ export const upcomingEvents: EventItem[] = [
 export const givingOptions: GivingOption[] = [
   {
     name: "PayNow",
-    description: "Scan or enter UEN T08CC4042G — Church of the Risen Christ.",
+    // Round-12 (audit F-4): the UEN string itself renders once, in the
+    // copyable detail row inside this featured card (see Give.tsx).
+    description: "Scan or transfer by UEN — Church of the Risen Christ.",
     icon: "globe",
   },
   {
