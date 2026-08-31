@@ -33,3 +33,15 @@ describe("no secret material is tracked", () => {
     expect(suspicious).toEqual([]);
   });
 });
+
+describe("no reference copies are tracked", () => {
+  // Round-12 guard (audit F-9): the src.orig/ reference copy shipped tracked
+  // in git (64 files) even though .gitignore listed it — ignore rules do not
+  // untrack, the exact lesson of round-6 C1. Pruned 2026-08-31; this fails if
+  // it (or any src.orig path) ever re-enters the index.
+  it("does not track the src.orig/ reference copy (audit F-9)", () => {
+    const tracked = trackedFiles();
+    const leftovers = tracked.filter((f) => f === "src.orig" || f.startsWith("src.orig/"));
+    expect(leftovers).toEqual([]);
+  });
+});
