@@ -1589,3 +1589,192 @@ Every finding above is an instance of one failure mode: **volatile facts restate
 | **Outstanding security action** | **Rotate the ssh key leaked in git history (`docs/ssh-key.txt`, commit `0be0fe8`) — repo owner action; working-tree guard is `src/repo-hygiene.test.ts`** |
 | Audit ledger + remediation | `docs/code-review-audit-round6-2026-08-31.md` + `docs/remediation-plan-round6-2026-08-31.md` (round 6) · `docs/code-review-audit-round7-2026-08-31.md` + `docs/remediation-plan-round7-2026-08-31.md` (round-7 audit of the "Honest Light" commits — zero new C/H/M; scrollspy tie-break + E2E sleep remediation) · `docs/design-enhancement-round7-2026-08-31.md` (round-7 design) · `docs/remediation-plan-round9-2026-08-31.md` (round-9 built-artifact E2E contract — E2E-L1 favicon form + `playwright.built.config.ts`) · `docs/e2e-live-pass-round11-2026-08-31.md` (round-11 live pass vs `66d2398` — byte-verified deploy + tri-env + journey; E2E-J1 `agent-browser eval` backslash lesson → pitfall #15) · `docs/UI-UX-Design-Audit_StMaryOfAngels_vs_RisenChrist.md` + `docs/remediation-plan-round12-2026-08-31.md` + `docs/remediation-round12-2026-08-31.md` (round-12 comparative UI/UX audit remediation — F-1 Devotion chip AA terracotta-600 5.36:1, F-2 mass-card footnote /85 + date lock, F-3 path-style deep-link rewrite, F-4 Give UEN copyable row, F-9 src.orig prune; TDD red→green) · **unification audit 2026-09-01: Appendix G** |
 
+## reference `package.json`
+```json
+{
+  "name": "risen-christ-church",
+  "private": true,
+  "version": "1.4.4",
+  "type": "module",
+  "packageManager": "pnpm@11.0.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:built": "playwright test --config=playwright.built.config.ts",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report"
+  },
+  "dependencies": {
+    "clsx": "2.1.1",
+    "lucide-react": "1.34.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-router-dom": "7.18.2",
+    "tailwind-merge": "3.6.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@playwright/test": "1.55.1",
+    "@tailwindcss/vite": "4.1.17",
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "16.2.0",
+    "@testing-library/user-event": "14.5.2",
+    "@types/node": "22.20.1",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.5",
+    "@vitejs/plugin-react": "5.2.0",
+    "@vitest/coverage-v8": "3.2.6",
+    "eslint": "9.39.5",
+    "eslint-plugin-react-hooks": "5.2.0",
+    "eslint-plugin-react-refresh": "0.4.19",
+    "globals": "16.1.0",
+    "jsdom": "26.1.0",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.28.0",
+    "vite": "7.3.6",
+    "vite-plugin-singlefile": "2.3.3",
+    "vitest": "3.2.6"
+  },
+  "allowScripts": {
+    "esbuild@0.27.7": true,
+    "esbuild@0.25.12": true
+  }
+}
+```
+
+## reference `AGENTS.md`
+```markdown
+# AGENTS — risen-christ-church
+
+> Port of https://www.risenchrist.org.sg/ — Church of the Risen Christ, Toa Payoh (91 Toa Payoh Central, Singapore 319193). First Catholic church in the new town, blessed 3 July 1971 by Archbishop Michel Olçomendy — Singapore's first fully air-conditioned church (Fr Pierre Abrial, $450k). Grateful, Faithful, and Sent. Static SPA — no backend, no DB, no SSR. For deep conventions, workflow, and design system detail, read `CLAUDE.md`.
+
+## Stack
+
+`React 19.2.8` + `Vite 7.3.6` + `Tailwind CSS 4.3.3` (`@tailwindcss/vite 4.1.17`, CSS-first `@theme` inline in `src/index.css`) + `TypeScript 5.9.3` strict + `React Router 7.18.2` `HashRouter` + `vite-plugin-singlefile 2.3.3` (primary `dist/index.html` + `dist/images/` for GH Pages / S3) + `eslint 9.39.5` flat + `vitest 3.2.6` (`jsdom 26.1.0`) + `@testing-library/react 16.2.0` + `playwright 1.55.1` (chromium) · alias `@` → `src/` (sync `vite.config.ts` `path.resolve(__dirname,"src")` ↔ `tsconfig.json` `paths: {"@/*":["src/*"]}` + `baseUrl:"."`) · `pnpm 11.0.0` (`packageManager` + `engines node>=20`, `pnpm-lock.yaml` committed, `--frozen-lockfile` in CI), `npm` works · all deps pinned exact — no `^` in `package.json` (re-pin on upgrade, update docs)
+
+## Commands
+
+All commands verified in `package.json` `scripts`. Don't document a script until it exists there.
+
+| Command | Purpose |
+|---|---|
+| `pnpm install` | Install deps (Node 20+ for Vite 7, pnpm 11) — pnpm is the supported path; `npm ci` needs `--legacy-peer-deps` (typescript-eslint 8.28.0 peer range predates TS 5.9) |
+| `pnpm dev` | Vite HMR dev server (default `http://localhost:5173`) |
+| `pnpm build` | Production single-file build → `dist/index.html` |
+| `pnpm preview` | Preview `dist` locally |
+| `pnpm typecheck` | Type gate `tsc --noEmit` — **run before every push** |
+| `pnpm lint` | ESLint flat (`eslint . --max-warnings 0`) |
+| `pnpm lint:fix` | ESLint auto-fix (`eslint . --fix`) |
+| `pnpm test` | Vitest `jsdom` `run` — **35 files / 202 tests** (`ci-workflow` 4 + `repo-hygiene` 3 + `docs-contract` 16 + `cn` 5 + `nav` 7 + `content` 10 + `site` 8 + `massDay` 5 + `monogram` 7 + `deepLinks` 7 + `Button` 11 + `SkipLink` 3 + `Accordion` 6 + `SafeImage` 6 + `Header` 17 + `BackToTop` 7 + `Reveal` 2 + `wcag-contrast` 5 + `Ministries` 3 + `cta-bands` 6 + `worship-mass` 6 + `about-visuals` 4 + `event-chips` 3 + `give-featured` 2 + `give-uen` 3 + `card-affordances` 6 + `Timeline` 3 + `NotFound` 2 + `History` 2 + `Layout` 2 + `useScrollProgress` 4 + `useScrollSpy` 6 + `ScrollProgress` 2 + `head` 13 + `security-headers` 6) via `src/test/setup.ts` |
+| `pnpm test:watch` | Vitest watch mode |
+| `pnpm test:coverage` | Vitest with coverage (`vitest run --coverage`) |
+| `pnpm test:e2e` | Playwright `chromium` (8 specs — **51 tests**: smoke 11 + navigation 8 + ministries 4 + give-faq 4 + enhancements 7 + enhancements-round5 6 + enhancements-round7 8 + deep-links 3) — Risen Christ copy (91 Toa Payoh Central, He is risen, Velankanni, Toa Payoh NS19) |
+| `pnpm test:e2e:ui` | Playwright UI mode |
+| `pnpm test:e2e:report` | Open last Playwright HTML report |
+| `pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build` | Pre-push gate (all five must be green) |
+
+## Structure
+
+```
+src/ (35 files / 202 tests — 41 source + 35 tests + 1 setup + 51 E2E)
+  App.tsx              # HashRouter + 17 Route entries (16 content paths + * NotFound; see Routing below)
+  main.tsx             # StrictMode + createRoot + resolveHashRedirect pre-mount rewrite (round-12 F-3)
+  index.css            # @theme tokens (25 colors + 2 shadows) + @layer base/utilities (26 utilities: text-balance, bg-adobe-texture, bg-gold-bloom, bg-grain, divider-weave, divider-weave-thin, gold-rule, gold-rule-left, hero-ken-burns, img-zoom, mask-fade-b, reveal, reveal-visible, rise-in + rise-in-d1..d4, menu-in, drawer-in, drawer-item-in, page-in, dot-pulse, card-lift, link-underline, skip-link + 8 keyframes gold-rule-draw/hero-ken-burns/rise-in/menu-in/drawer-in/drawer-item-in/page-in/halo-pulse + themed scrollbar (maroon thumb on parchment track, webkit + scrollbar-color))
+  components/          # Layout (+SkipLink +BackToTop +ScrollProgress), Header (useScrolled(16) + aria-current nav states + menu-in/drawer-in entrances + modal drawer: dialog/aria-modal/focus-trap/focus-restore + Escape handler), Footer (3 socials + SSVP/Free/CEP/bulletin links), PageHero (rise-in staged content), Emblem, Timeline (dot-pulse halos), SocialIcons (3: Facebook/Instagram/YouTube), SafeImage (local fallback), BackToTop (threshold 480, progress ring, reduced-motion-aware), ui/{Button (active press),Container,SectionHeading,Accordion (animated grid-rows collapse),Reveal}
+  hooks/               # useScrolled.ts (threshold 12 default; Header passes 16) + useScrollProgress.ts (0..1, rAF-throttled) + useScrollSpy.ts (round-7 ministries scrollspy, viewport-middle-band IO)
+  pages/               # Home, About, History, Worship, Ministries, NewsEvents, Serve, Give, FAQ, NotFound (10 pages, all named exports: Home, About, History, Worship, Ministries, NewsEvents, Serve, Give, FAQ, NotFound)
+  data/                # nav.ts (primaryNav + footerNav with description on children), content.ts (TimelineEntry/GroundsPlace/Ministry/FaqItem/EventItem/GivingOption/Priest/PpcMember + priests[3] (Brian D'Souza, Arun Bellarmin, Dexter Chua — each email+phone)/ppcMembers[7]/lifeTimeline[8 1969–2026]/grounds[3]/ministries[6]/faqs[6]/upcomingEvents[6]/givingOptions[8]/serveRoles[4]/devotions[6] + images {hero/heroFallback/chapel/sanctuary/garden/glass/hall/cemetery/feast/naveCdn/courtyardCdn — all local}), site.ts (site as const: name/shortName/耶稣复活堂/tagline/vision + address {street/city/zip/full+query getters} + hours {gates/mainChurch/chapel/reception/parishOffice/mediaCentre/adorationRoom} + mass {weekdayMorning/weekdayEvening/saturday/sunday[5]/confession/adoration/secondCollection + note + monthly (Bahasa/Tamil/Tagalog)} + contact {parishPriestPhone/officePhone/mediaPhone/email/adminEmail/connectEmail/youthEmail/dpoEmail} + transport {mrt Toa Payoh NS19 / buses 88,157,163 B52261} + feast {The Risen Christ, Easter Sunday} + uen T08CC4042G/chequePayee/facebook/instagram/youtube/archdiocese/mapsUrl/mapsEmbedSrc + freeMinistry/ssvp/bulletin/cep + origin/url/ogImage)
+  utils/               # cn.ts — twMerge(clsx), always merge via cn() + massDay.ts — massDayKey(date): 'weekdays'|'saturday'|'sunday', single source for the Worship today-highlight + monogram.ts — monogram(name): "Fr Brian D'Souza" → "BD", honorific stripping
+  components/EventMeta.tsx # shared categoryTone + EventMeta chip (Home + NewsEvents, R5-M1 remediation)
+vite.config.ts         # alias @→src + test { globals, jsdom, setupFiles: src/test/setup.ts, include: src/**/*.{test,spec}.{ts,tsx}, exclude: e2e/** } + server.watch.ignored [skills/**, dist/**, playwright-report/**, test-results/**, coverage/**, src.orig/**] + viteSingleFile()
+tsconfig.json          # strict + noUnusedLocals/noUnusedParameters/noFallthroughCasesInSwitch/isolatedModules/noEmit + include [src, vite.config.ts, eslint.config.js, playwright.config.ts] + types [node, vitest/globals] + paths @/*
+eslint.config.js       # flat config (typescript-eslint 8 + react-hooks 5 + react-refresh); ignores [dist, node_modules, coverage, playwright-report, test-results, skills, src.orig]
+playwright.config.ts   # Playwright 1.55.1 (chromium, webServer → pnpm exec vite :5173, expect timeout 15s; CSP is a meta tag in index.html, not a config header)
+e2e/                   # 8 specs — 51 tests: smoke.spec.ts (11) + navigation.spec.ts (8) + ministries.spec.ts (4) + give-faq.spec.ts (4) + enhancements.spec.ts (7) + enhancements-round5.spec.ts (6) + enhancements-round7.spec.ts (8) + deep-links.spec.ts (3) + helpers.ts — Risen Christ (91 Toa Payoh Central, He is risen)
+.github/workflows/ci.yml # CI: lint → typecheck → test → test:e2e → build + artifacts (Node 24, pnpm 11)
+public/                 # 8 images (hero-church.jpg, chapel-interior.jpg, sanctuary.jpg, rosary-garden.jpg, stained-glass.jpg, parish-hall.jpg, cemetery.jpg, feast.jpg → dist/images/) + `_headers` (Cloudflare Pages security headers → dist/_headers — honored only on Cloudflare Pages deploys; the current proxied host serves none — round-6 audit H1) + `favicon.svg` (→ dist/favicon.svg); all local images — CDN keys hero/naveCdn/courtyardCdn now point to local fallbacks
+index.html             # Google Fonts Fraunces + Source Sans 3; CSP `img-src 'self' data: blob:` only (no legacy wikimedia/pexels), `object-src 'none'`, `base-uri 'self'`, frames from google.com (maps embed); OG tags + Church JSON-LD for Church of the Risen Christ (www.risenchrist.org.sg)
+src.orig/              # (pruned round-12, 2026-08-31) — was the archived St Mary of the Angels port (5 Bukit Batok East Ave 2, Portiuncula, OFM Custody 1970 / WOHA 2004); had remained git-tracked despite `.gitignore` since round 3 — 64 files found tracked by the round-12 audit and removed (`git rm -r --cached` + tree removal); `src/repo-hygiene.test.ts` guard now fails if it re-enters; lineage: Rother Shrine → St Joseph BT → St Mary of the Angels (src.orig) → Risen Christ (src)
+```
+
+## Quirks — would break if guessed wrong
+
+- **HashRouter is intentional** — static hosts (GH Pages / S3) have no SPA fallback. Don't switch to `BrowserRouter` without adding a `404.html` redirect. Deep links are `/#/worship`, `/#/ministries#liturgical`, etc.
+- **`viteSingleFile()` inlines JS+CSS** — `public/images/` is still copied to `dist/images/` (Vite `publicDir` is not inlined; upload both). No assumed code-splitting. Dynamic `import()` that expects chunks will be inlined or break.
+- **Alias `@` must stay in sync** — `vite.config.ts` (`path.resolve(__dirname,"src")`) ↔ `tsconfig.json` (`paths: {"@/*":["src/*"]}`, `baseUrl:"."`) — change both.
+- **Tailwind v4 has no `tailwind.config.js`** — tokens live only in `src/index.css` `@theme`. Don't add arbitrary `bg-[#...]`; extend `@theme` with a named `shrine-*` token.
+- **TS strict will fail on unused code** — `noUnusedLocals:true` + `noUnusedParameters:true` + `noFallthroughCasesInSwitch:true` + `isolatedModules:true` + `noEmit:true`. Clean unused vars/params before commit.
+- **Test/lint harness** — `eslint 9.39.5` flat + `vitest 3.2.6` (jsdom) + `@testing-library/react 16.2.0` + `playwright 1.55.1` (chromium) — gate is `lint && typecheck && test && test:e2e && build` (`35 files / 202` via `src/test/setup.ts` + `51 E2E` via `e2e/`: smoke 11 + navigation 8 + ministries 4 + give-faq 4 + enhancements 7 + enhancements-round5 6 + enhancements-round7 8 + deep-links 3). CI mirrors this. `eslint` ignores `skills/` + `src.orig/`; `vite.config.ts` `test` + `server.watch.ignored` + `tsconfig.json` `types [vitest/globals]` are required.
+- **`skills` is vendored, git-tracked reference content** — pruned in round 3 (2026-08-30), re-added in full at `0be0fe8` (2026-08-31): `skills/skills-catalog.md` + per-skill `SKILL.md` files are tracked again. Tooling ignores it regardless: `eslint.config.js` `ignores` + `tsconfig` excludes + `vite.config.ts` watch-ignores. Don't lint, type-check, or import from it.
+- **Google Fonts loaded in `index.html`** — `Fraunces` (display) + `Source Sans 3` (body). CSP in that file whitelists `fonts.googleapis.com`/`fonts.gstatic.com` + `google.com` for the maps iframe. No `upload.wikimedia.org`/`images.pexels.com` allowlist (removed for Risen Christ — all `images.*` are local). Don't add runtime font loaders in components.
+- **`Layout.tsx` handles hash scroll** — double-hash aware (`#/ministries#liturgical` → split on `#` + strip `/`) + `setTimeout 80ms` + fallback `window.scrollTo`. Current anchor targets are `#mass`/`#confession`/`#visit` on `/worship` and `#liturgical`/`#faith-formation`/`#pastoral-care`/`#family-life`/`#youth`/`#language-communities` on `/ministries`. Preserve when extending layout. Layout also wraps outlet in a keyed `page-in` container (`data-testid="page-container"` + `data-route`) so route changes replay entrance while hash-only updates keep the node.
+- **`vite.config.ts` `server.watch.ignored`** — ignores `**/skills/**`, `**/dist/**`, `**/playwright-report/**`, `**/test-results/**`, `**/coverage/**`, `**/src.orig/**` to avoid `ENOSPC` file-watcher limit from the vendored `skills/` tree (contains large `.venv`) and archived `src.orig/`.
+- **`SafeImage` fallback** — `src/components/SafeImage.tsx` wraps `<img>` with `fallback` default `/images/hero-church.jpg`, `loading="lazy"` default, optional `fetchPriority` (set `"high"` on above-the-fold heroes — Home hero + PageHero), and `onError` → `dataset.fallback` guard to swap `src` once. All current `images.*` are local; CDN keys `naveCdn`/`courtyardCdn` point to local fallbacks. Use `SafeImage` for any future external image; don't use bare `<img>` for CDN sources.
+- **SkipLink never rewrites the hash** — `src/components/SkipLink.tsx` `preventDefault`s and imperatively focuses `#main-content` (`<main>` in `Layout`). A native jump would rewrite the hash and route to NotFound under HashRouter.
+- **Header close-on-activation** — the mobile drawer closes on any in-drawer link activation (`onClickCapture` on the drawer `<nav>`), not only on pathname change: a tap on a link to the **current** route never changes `pathname`, so the `useEffect([pathname,hash])` close cannot fire (H-1 in `docs/code-review-audit-2026-08-28.md` — fixed 2026-08-28). Desktop dropdown `<ul>` also closes on child-link click. Drawer top-level links carry `aria-current="page"` when any child is active; hamburger is `h-11 w-11` (44px). Header also handles `Escape` to close menus/drawer.
+- **Header modal drawer (round 4, audit L-5)** — the mobile drawer is a modal dialog (`role="dialog"` + `aria-modal="true"` + `aria-label="Site menu"` + `tabIndex={-1}`): the panel receives initial focus on open, `Tab`/`Shift+Tab` cycle inside it (trap in `handleDrawerKeyDown`), every close path (toggle, `Escape`, in-drawer link, route change, outside `pointerdown`) restores focus to the hamburger toggle (`drawerWasOpenRef` guard keeps mount from stealing focus), and a `pointerdown` outside the drawer closes it. Don't downgrade it back to a disclosure or remove the trap.
+- **`useScrolled` threshold** — `src/hooks/useScrolled.ts` defaults to `12`; `Header.tsx` calls `useScrolled(16)` to delay the transparent→solid switch on Home. Don't "fix" the mismatch — it's intentional.
+- **`ScrollProgress` is decoupled from Header** — `src/components/ScrollProgress.tsx` is a fixed `h-[3px]` rail (`data-testid="scroll-progress"`, `aria-hidden`, `scaleX(progress)`) rendered by `Layout` at `z-[60]`; it is not inside `Header`. `Header` solid calculation now includes `mobileOpen`.
+- **`Ministries` jump nav** — uses `<Link to="/ministries#id">` (not plain `<a href="#id">`) to preserve HashRouter route; plain `#id` would replace the hash and route to NotFound. Renders `ministries.map` → 6 pill links (`#liturgical`, `#faith-formation`, `#pastoral-care`, `#family-life`, `#youth`, `#language-communities`) with `aria-label="Jump to ministry"` + `aria-current="true"` on the pill matching `useLocation().hash` + alternating `bg-shrine-cream`/`bg-shrine-parchment` sections.
+- **"Sacred Motion" package** (docs/ui-ux-remediation-plan-2026-08-28.md — all transform/opacity only, gated by the global `prefers-reduced-motion` block in `index.css`):
+  - **Staged entrances** — `.rise-in` + `.rise-in-d1..d4` delay steps animate Home hero and PageHero content on mount (keyframe `rise-in`, fill `both` → settles at opacity 1; instant under reduced motion).
+  - **Menu entrances** — `.menu-in` on the desktop dropdown `<ul>`, `.drawer-in` on the mobile drawer (both conditionally rendered, so the keyframe runs on mount).
+  - **Accordion collapse** — panels use the `grid-template-rows 0fr→1fr` technique (`grid grid-rows-[0fr|1fr]` + inner `overflow-hidden`), NOT `hidden`. Closed panels carry `aria-hidden="true"` + `inert` so screen readers/keyboard skip them; `aria-expanded` on the button is the single source of truth.
+  - **Card hover system** — `.card-lift` (lift + `shadow-shrine` + gold border tint) is the one true card hover; grounds/devotion/pillar/role/giving/event cards all use it. Don't re-add ad-hoc `hover:-translate-y-*` chains.
+  - **Link affordances** — `.link-underline` draws a gold underline via a `::after` scaleX transform (footer nav, top-bar Give link). Buttons add `active:translate-y-0 active:scale-[0.98]` press feedback.
+  - **Timeline halo** — `.dot-pulse::after` is an expanding gold ring (keyframe `halo-pulse`, infinite); reduced-motion sets it to `opacity: 0`.
+- **`BackToTop` contract** — `src/components/BackToTop.tsx` (mounted in `Layout` before `<Footer/>`): appears when `window.scrollY > 480`, hides below (`aria-hidden` + `tabIndex -1` + `pointer-events-none` when hidden), click → `window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)') ? 'auto' : 'smooth' })`. It never touches the hash (HashRouter-safe). It carries a progress ring (`data-testid="back-to-top-progress"` + inner `circle[data-progress]`) whose `stroke-dashoffset` fills with `useScrollProgress`. When it hides while focused, it blurs itself first (focus must not rest inside an `aria-hidden` subtree — round-3 audit L-4).
+- **Worship "today" Mass highlight** — `src/utils/massDay.ts` `massDayKey(date)` maps `getDay()` 0→sunday / 6→saturday / rest→weekdays; `Worship.tsx` renders the matching card via a local `MassCard` with `data-testid="mass-card"` + `data-card-day` + `data-today="true"` + gold top rule + "Today" chip (exactly one per calendar day — never hardcode a day or duplicate the mapping). Sunday slots are a gold-dot list with `hover:bg-shrine-maroon-50/60`.
+- **Round-5 "Light of the Portiuncula" package** (`docs/design-enhancement-round5-2026-08-30.md` — St Mary enhancement, retained in motion system) — event cards render the category inside a bordered gold chip (`rounded-full` + `categoryTone` color) with the date in `font-display` beside it (shared `src/components/EventMeta.tsx` — `categoryTone` + `EventMeta`); the History story column is `lg:sticky lg:top-28 lg:self-start` (`data-testid="history-story"`) beside the timeline; the Timeline rail is `[data-testid="timeline-rail"]` (`bg-gradient-to-b ... via-shrine-gold-400/70`) — don't restore `border-l`; `.img-zoom` drifts only inside `.group` cards; `.bg-gold-bloom` decorates the Home + Give dark bands; Button icons render inside an `aria-hidden` span with `group-hover:translate-x-0.5` nudge; NotFound carries the ghost `Emblem` + `rise-in` staging; About pillars use ghost `font-display text-5xl` numerals and friar cards carry `aria-hidden` monogram discs (`src/utils/monogram.ts` `monogram()` handles Fr/Friar, covered by `monogram.test.ts` in `src.orig`).
+- **`aria-current` nav contract** — Header plain links get `aria-current="page"` when `pathname === item.to`; dropdown parent buttons get `aria-current="true"` + gold tint when any `child.to.split("#")[0] === pathname`; dropdown child links get `aria-current="page"` on exact `pathname + hash === child.to`; Ministries pills get `aria-current="true"` on hash match. Mobile drawer parents get `aria-current="page"` when a child route is active (e.g. `/history` → About parent current). Header hamburger is `h-11 w-11` (44px touch target) — don't shrink it.
+
+## Conventions
+
+- **Routing:** `App.tsx` is the only route table — 17 `Route` entries (16 content paths + `*` NotFound) covering 10 pages, with 7 alias paths in 5 groups (`/worship` canonical for `/mass-times`+`/hours-location`+`/visit`; `/ministries` canonical for `/ministry`; `/news-events` canonical for `/news-and-events`; `/serve` canonical for `/volunteer`; `/give` canonical for `/donate`) and hash anchors on two pages: `/worship` → `#mass`/`#confession`/`#visit` (Mass schedule, Confession & Adoration, Find Us) and `/ministries` → `#liturgical`/`#faith-formation`/`#pastoral-care`/`#family-life`/`#youth`/`#language-communities` (6 ministry sections). Nav is driven by `src/data/nav.ts` (`primaryNav` with `description` on children + `footerNav: NavLink[]`) — update there, `Header`/`Footer` render from it. `Header` dropdowns and `Ministries` jump nav must use `<Link to="/path#id">`, never `<a href="#id">`.
+- **Data:** `src/data/content.ts` is the data layer — 8 exported interfaces (`TimelineEntry`, `GroundsPlace`, `Ministry`, `FaqItem`, `EventItem`, `GivingOption`, `Priest`, `PpcMember`) and 10 exports: `priests[3]` (Fr Brian D'Souza, Fr Arun Bellarmin, Fr Dexter Chua — each `email`+`phone`) + `ppcMembers[7]` (Parish Priest + 2 Assistants + Secretariat Peter Quek / Admin Audrey Rozario / Youth Calvin Swee / Pastoral Cheryl-Anne Goh) + `lifeTimeline[8]` spanning **1969–2026** Toa Payoh (1969 Ho Ping Centre + tender → 1971 Olçomendy $450k first air-con → 1970s many tongues Velankanni → 2003 four-storey → 2010s Filipino/Indonesian/Myanmar Simbang Gabi → 2021 Golden Jubilee → 2023 Fr Brian → 2026 Grateful/Faithful/Sent) + `grounds[3]` (`main-church`/`chapel`/`parish-hall`, each with `image`+`imageFallback`+`imageAlt` — all local) + `ministries[6]` (`liturgical`/`faith-formation`/`pastoral-care`/`family-life`/`youth`/`language-communities`→ Bahasa 1st Fri 20.00, Tamil 2nd Sun 19.00, Tagalog 4th Sun 15.00, Mandarin 8.15) + `faqs[6]` (Mass/confession/how to get there/parking/baptism-marriage/columbarium-funeral) + `upcomingEvents[6]` (`title`+`date`+`summary`+`category` Parish|Devotion|Formation|Archdiocese + optional `href` — Velankanni 10–12 Sep, CEP, F.R.E.E. Acts…) + `givingOptions[8]` (PayNow UEN T08CC4042G, collections, cheque payable Church of the Risen Christ, cash at office, etc. — no HRSM) + `serveRoles[4]`/`devotions[6]` untyped consts + `images` (11 keys: `hero`/`heroFallback`/`chapel`/`sanctuary`/`garden`/`glass`/`hall`/`cemetery`/`feast` local, `naveCdn`/`courtyardCdn` local aliases). `src/data/site.ts` (`site as const`) is the canonical single source for `name` Church of the Risen Christ / `shortName` Risen Christ Toa Payoh / `chineseName` 耶稣复活堂 / `tagline` Grateful, Faithful, and Sent. / `vision` He is risen. + `address` 91 Toa Payoh Central Singapore 319193 (`full`/`query` getters) + `hours` (7 keys: `gates`, `mainChurch`, `chapel` Adoration Room Mon 12–22…, `reception`, `parishOffice`, `mediaCentre`, `adorationRoom`) + `mass` (9 keys: `weekdayMorning`, `weekdayEvening`, `saturday`, `sunday[5]`, `confession`, `adoration`, `secondCollection`, `note`, `monthly`) + `contact` (office 6253 2166, media 6356 5958, `crc.secretariat@catholic.org.sg` / `crc.admin` / `crc.pastoral` / `crc.youth` / `dpo.crc`) + `transport` (Toa Payoh NS19 Exit A, buses 88/157/163 B52261) + `feast` The Risen Christ — Easter Sunday + `uen` T08CC4042G/`chequePayee`/`facebook`/`instagram`/`youtube`/`freeMinistry`/`ssvp`/`bulletin`/`cep`/`mapsUrl`/`mapsEmbedSrc` — Footer + Worship + About consume it, don't duplicate. Pages render from data — don't inline copy.
+- **Components:** `Button` (discriminated `to`/`href`/native `button` + `icon`; variants `primary|secondary|ghost|outline-light`; `active` press feedback), `Container` (`max-w-7xl px-5 sm:px-8`), `SectionHeading` (`eyebrow/title/description` + `align/light` + line), `PageHero` (`compact?`, `bg-grain` + dual gradients + `rise-in` staged content), `Reveal` (`delay`/`as`), `Accordion` (single-open, animated grid-rows collapse, `inert` closed panels), `Timeline` (left rail + `dot-pulse` halos — fed 1969–2026 Toa Payoh milestones), `SafeImage` (`src` + `fallback` + `alt` + `loading` + optional `fetchPriority`; always via `cn()`), `BackToTop` (threshold 480 + SVG ring + reduced-motion-aware, hash-safe), `ScrollProgress` (decoupled rail). Extend via `cn()`, not ad-hoc class strings.
+- **Styling:** Use `shrine-cream/parchment(+dark)/stone/ink/charcoal/maroon-*/gold-*/pine-*/terracotta-*` + `shadow-shrine`/`shadow-shrine-lg` + utilities `text-balance` / `bg-adobe-texture` / `bg-grain` / `divider-weave`/`divider-weave-thin` / `gold-rule`/`gold-rule-left` / `hero-ken-burns` / `rise-in`(+`-d1..d4`) / `menu-in` / `drawer-in` / `dot-pulse` / `card-lift` / `link-underline` / `reveal`+`reveal-visible` / `skip-link` / `mask-fade-b` + `page-in`. Motion rule: transform/opacity only, `prefers-reduced-motion` gates everything (global block in `index.css`). Mobile-first (`sm:`/`lg:`). Tokens are unchanged — only the imagery/content they frame is now Toa Payoh (1971 first air-con nave, Adoration Room, parish hall & media centre).
+
+## Don't
+
+- Switch `HashRouter` → `BrowserRouter`, break alias routes, or prop-drill nav arrays. The 7 aliases exist for bookmarks/printed material — keep each `aliasOf` → canonical pair in `App.tsx`.
+- Add one-off hex colors or bypass `cn()` (`tailwind-merge` dedup matters).
+- Rebuild `Dialog`/`Dropdown` from scratch if `shadcn/ui` (Radix) is adopted — use its primitives.
+- Add SSR, API routes, or a CMS without an explicit architecture decision — this is a static SPA (`CLAUDE.md` isolates future CMS behind `lib/cms`).
+- Reintroduce St Mary of the Angels / Bukit Batok content (5 Bukit Batok East Ave 2, Portiuncula, OFM Custody of St Anthony, WOHA 2004 house of light, Garden of Peace, tian shen zhi hou, Towards a Prayerful & Missionary Parish, UEN T08CC4053H/HRSM, columbarium, telegram, whatsapp) or reassign `src/data/site.ts` parish facts. Hours, Mass, and address are the single source — don't duplicate them across pages.
+- Assume gates are green — run `pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build` before shipping; all five must pass (32/184 + 48 E2E + 395.66kB). Asset-path e2e assertions must be env-agnostic — `pnpm test:e2e:built` proves the built artifact (round-9 E2E-L1).
+
+## Where to look next
+
+- `CLAUDE.md` — full six-phase workflow, detailed conventions, anti-patterns, env contract, and validation checklist.
+- `docs/code-review-audit-round3-2026-08-30.md` — **round-3 tiered review + security audit** (historical — audited St Mary of the Angels before the Risen Christ port; C1/H3/M4/L6/I4 with evidence + verification ledger).
+- `docs/remediation-plan-round3-2026-08-30.md` — the TDD remediation plan executed for round 3 (St Mary — historical).
+- `docs/design-enhancement-round5-2026-08-30.md` — **round-5 design enhancement plan + validation** (historical — "Light of the Portiuncula" for St Mary; motion system retained for Risen Christ; screenshots in `docs/audit-shots-round5/`).
+- `docs/remediation-round4-2026-08-30.md` — **round-4 closure of the deferred L-5**: mobile drawer is now a modal dialog (dialog/aria-modal/focus-trap/focus-restore/outside-tap close) + scroll-rail E2E race root-caused and made deterministic.
+- `docs/code-review-audit-round6-2026-08-31.md` — **round-6 tiered review + security audit** (live-site E2E + browser journeys verified byte-identical to `dist/`; findings C1/H1/M1–M3/L1–L4 with verification ledger; C1: `docs/ssh-key.txt` untracked — **rotate the leaked key**).
+- `docs/remediation-plan-round6-2026-08-31.md` — the TDD remediation plan executed for round 6 (guard tests `src/ci-workflow.test.ts` + `src/repo-hygiene.test.ts` + `src/docs-contract.test.ts`).
+- `docs/design-enhancement-round7-2026-08-31.md` — **round-7 design enhancement plan + validation (current)** — "Honest Light": reveal resilience (print override + IO guard + early-entry rootMargin), Worship sticky mercy column, News/FAQ closure bands, Give featured PayNow card, Ministries scrollspy (`src/hooks/useScrollSpy.ts`), About PPC/link affordances, desktop nav gold hairline, `card-tint` info-card honesty system, PageHero atmosphere; screenshots in `docs/audit-shots-round7/`.
+- `risen-christ_SKILL.md` — canonical engineering distillate (full §§ 1–20 + Appendices, verified against `src/`); `st-mary-of-angels_SKILL.md` is now a redirect stub (points here) and `rothershrine-v2_SKILL.md` remains the lineage stub.
+- `docs/validation-src-vs-src.orig-2026-08-30.md` — **historical validation: `src` (St Mary) adopted 10/10 good contracts from `src.orig` (St Joseph) and improved 7** — retained for lineage; **2026-08-31 32/184 + 48 + 395.66kB green (re-verified post round-9 E2E-L1 remediation)** — Risen Christ port verified (lint 0 + typecheck 0 + 32/184 + 48 E2E + build).
+- `docs/code-review-audit-round7-2026-08-31.md` — **round-7 tiered audit of commits `2f65c11..30a9b98` (current)** — six-phase audit of the "Honest Light" round (static gates, per-file Six-Axis review, architecture/security/motion checks, 48 E2E + live-DOM verification, live == dist md5); findings L-1/L-2 + I-1..I-3, **zero new C/H/M**; carried ops items H1′ (host security headers) + C1′ (key rotation) re-flagged.
+- `docs/remediation-plan-round7-2026-08-31.md` — the TDD remediation executed for the round-7 audit: `useScrollSpy` document-order tie-break + truthful JSDoc (L-2/I-2), E2E hard-sleep removal (L-1), docs re-pin 32/179 (M-2/M-3 drift found during re-pin).
+- `docs/remediation-plan-round9-2026-08-31.md` — **round-9 built-artifact E2E contract (current)** — the fresh live E2E pass vs `8e4f811` (47/48) exposed E2E-L1: the favicon spec asserted the dev form `/favicon.svg` while the singlefile build ships `./favicon.svg`. Remediated TDD-style: env-agnostic assertion + resolution check, new tracked `playwright.built.config.ts` (`pnpm test:e2e:built` — `vite preview :4173` or `E2E_BASE_URL` → live), docs-contract +2 pins, re-pin 32/181, v1.4.2. Suite green on dev + dist + live (48/48 each).
+- `docs/prompts.md` — intent lineage.
+- `docs/e2e-live-pass-round11-2026-08-31.md` — **round-11 live E2E pass** — fresh pass vs `66d2398`: deployment byte-verified (live md5 6ee34e4a… ≡ dist 395,663 B), five gates green, tri-env E2E 48/48 (dev + dist + live), agent-browser journey 43/43, zero console/page errors; finding E2E-J1 (`agent-browser eval` strips backslashes from regex literals → hidden SyntaxError → false FAIL; site correct) fixed backslash-free in the local journey script; lesson pinned as SKILL pitfall #15 + docs-contract guard; v1.4.3.
+- `docs/UI-UX-Design-Audit_StMaryOfAngels_vs_RisenChrist.md` + `docs/remediation-plan-round12-2026-08-31.md` + `docs/remediation-round12-2026-08-31.md` — **round-12 comparative-audit remediation (current)** — the comparative UI/UX audit of the two parish sites, Risen Christ findings closed TDD-style: F-1 Devotion chip retone to `terracotta-600` (`#8f4c30`, 5.36:1 AA on parchment), F-2 Worship mass-card footnote `/70`→`/85` (4.16→6.19:1) + date-tone lock, F-3 `src/utils/deepLinks.ts` path-style deep-link rewrite (reproduced soft-404 first), F-4 Give section retitled "Ways to give" + copyable UEN row in the PayNow card, F-9 tracked `src.orig/` pruned (64 files — `.gitignore` never untracks); counts re-pinned 32/184+48 → 35/202+51, v1.4.4.
+- `docs/ui-ux-remediation-plan-2026-08-28.md` — UI/UX audit findings + "Sacred Motion" enhancement plan (TDD mapping, validation table).
+- `src/index.css` — authoritative token list.
+- `src.orig/` — pruned round-12 (2026-08-31): the archived St Mary port had remained git-tracked despite `.gitignore` (ignore rules do not untrack — same lesson as round-6 C1); `git rm -r --cached` + tree removal; `src/repo-hygiene.test.ts` guard now fails if it re-enters. Lineage history: `docs/` + git history. Legacy parish facts must not be reintroduced.
+```

@@ -24,3 +24,7 @@ docs/ssh-key.txt
 package-lock.json
 docs/audit-shots-round5/
 scripts/
+
+# binary docs — do not track zipped image packs
+*.zip
+docs/*.zip
