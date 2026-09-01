@@ -26,7 +26,7 @@ export function Ministries() {
 
       <nav
         aria-label="Jump to ministry"
-        className="sticky top-[3.5rem] z-20 border-b border-shrine-stone bg-shrine-cream/95 backdrop-blur-md lg:top-[5.5rem]"
+        className="sticky top-[3.5rem] z-40 border-b border-shrine-stone bg-shrine-cream/95 backdrop-blur-md lg:top-[5.5rem]"
       >
         <Container className="flex gap-2 overflow-x-auto py-3">
           {ministries.map((ministry) => (
