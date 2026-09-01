@@ -6,7 +6,7 @@ import { Accordion } from "@/components/ui/Accordion";
 const items = [
   { question: "Q1 What are the Mass times?", answer: "A1 Weekday and weekend Mass times." },
   { question: "Q2 When is confession?", answer: "A2 15 minutes before weekend Masses." },
-  { question: "Q3 How do I get there?", answer: "A3 620 Upper Bukit Timah Road." },
+  { question: "Q3 How do I get there?", answer: "A3 91 Toa Payoh Central, Singapore 319193." },
 ];
 
 describe("Accordion", () => {
